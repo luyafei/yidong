@@ -98,6 +98,20 @@ public class YdLeaveController extends BaseController {
 		qtemp.setBusinessType("ydLeave_audit");
 		qtemp.setDept(user.getOffice().getId());
 		List<YdAuditTemplate> templateList = auditTemplateService.findList(qtemp);
+		//20170502 修改
+		//判断是否是审核人 如果是查询 level 2的审核人
+		for (YdAuditTemplate tem : templateList){
+			if (user.getLoginName().equals(tem.getAuditUserLoginname())){
+				logger.info("请假审核人是一级审核人！{}",user.getLoginName());
+				YdAuditTemplate qtemp2 = new YdAuditTemplate();
+				qtemp.setAuditLevel(2);
+				qtemp.setBusinessType("ydLeave_audit");
+				qtemp.setDept(user.getOffice().getId());
+				templateList = auditTemplateService.findList(qtemp);
+			}
+
+		}
+		////////////////
 		model.addAttribute("templateList",templateList);
 		model.addAttribute("ydLeave",ydLeave1);
 		return "modules/yd/ydLeaveForm";
@@ -124,7 +138,7 @@ public class YdLeaveController extends BaseController {
 		ydAuditTemplate.setBusinessType("ydLeave_audit");
 		List<YdAuditTemplate> retydAuditTemplate = auditTemplateService.findList(ydAuditTemplate);
 		ydLeave.setAuditUserName(UserUtils.getByLoginName(ydLeave.getAuditUserNo()).getName());
-		if (null != retydAuditTemplate){
+		/*if (null != retydAuditTemplate){
 			YdAuditTemplate two = null;
 			for(YdAuditTemplate temp : retydAuditTemplate){
 				if ("2".equals(temp.getAuditLevel())){
@@ -135,7 +149,7 @@ public class YdLeaveController extends BaseController {
 					ydLeave.setAuditUserName(null == two ? temp.getAuditUserName() : two.getAuditUserName());
 				}
 			}
-		}
+		}*/
 		ydLeaveService.save(ydLeave);
 		addMessage(redirectAttributes, "保存异常申请成功");
 		return "redirect:"+Global.getAdminPath()+"/yd/ydLeave/list/?repage";

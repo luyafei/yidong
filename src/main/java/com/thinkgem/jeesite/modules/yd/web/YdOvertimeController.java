@@ -126,6 +126,13 @@ public class YdOvertimeController extends BaseController {
 		qydAuditTemplate.setAuditLevel(ydOvertime.getAuditLevel() + 1);//	下级审核级别
 
 		YdAuditTemplate auditTemplate = ydAuditTemplateService.get(qydAuditTemplate);
+
+		//如果是1级审核人 审核人直接给2级审核人进行审核
+		if (auditTemplate.getAuditUserLoginname().equals(user.getLoginName())){
+			qydAuditTemplate.setAuditLevel(ydOvertime.getAuditLevel() + 2);
+			auditTemplate = ydAuditTemplateService.get(qydAuditTemplate);
+		}
+
 		ydOvertime.setAuditUserNo(auditTemplate.getAuditUserLoginname());
 		ydOvertime.setAuditUserName(auditTemplate.getAuditUserName());
 		ydOvertime.setAuditLevel(auditTemplate.getAuditLevel());
