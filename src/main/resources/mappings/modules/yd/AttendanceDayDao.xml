@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.yuekaoqin.dao.AttendanceDayDao">
+	<sql id="ydYuekaoqinColumns">
+		a.id AS "id",
+		a.area_id AS "areaId",
+		a.uid AS "uId",
+		a.dept_id AS "deptId",
+		a.name AS "name",
+		a.month AS "month",
+		a.date AS "date",
+		a.status AS "status",
+		a.createtime AS "createtime",
+		a.updatetime AS "updatetime"
+	</sql>
+	
+	<sql id="ydYuekaoqinJoins">
+	</sql>
+    
+	<select id="get" resultType="AttendanceDay">
+		SELECT 
+			<include refid="ydYuekaoqinColumns"/>
+		FROM yd_yuekaoqin a
+		<include refid="ydYuekaoqinJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="AttendanceDay">
+		SELECT 
+			<include refid="ydYuekaoqinColumns"/>
+		FROM yd_yuekaoqin a
+		<include refid="ydYuekaoqinJoins"/>
+		<where>
+			
+			<if test="name != null and name != ''">
+				 a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="uid != null and uid != ''">
+				AND a.uid =#{uid}
+			</if>
+			<if test="month != null and month != ''">
+				AND a.month =#{month}
+			</if>
+			<if test="month == null or month == ''">
+				AND a.month = date_format(now(),'%Y%m')
+			</if>
+			<if test="deptId != null and deptId != ''">
+				AND a.dept_id = #{deptId}
+			</if>
+			<if test="date != null">
+				AND a.date = DATE_FORMAT(#{date},'%Y-%m-%d')
+			</if>
+			<if test="areaId != null and areaId != ''">
+				AND a.area_id = #{areaId}
+			</if>
+			<if test="status != null and status != ''">
+				AND a.status = #{status}
+			</if>
+			<!-- <if test="shenfen != null and shenfen == 'renzikaoqinshenhe' or shenfen == 'renzikaoqin'">
+				AND a.dept_id in ( select office_id from yd_yeukaoqin_all where audit_status='通过' AND att_month=#{month} )
+			</if> -->
+			<if test="shenfen != null and shenfen == 'renzikaoqin' or shenfen == 'daochu'">
+				AND a.dept_id in ( select office_id from yd_yeukaoqin_all where audit_status='通过' AND att_month=#{month} )
+			</if>
+			
+			
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="AttendanceDay">
+		SELECT 
+			<include refid="ydYuekaoqinColumns"/>
+		FROM yd_yuekaoqin a
+		<include refid="ydYuekaoqinJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+
+	<select id="getYdYuekaoqin" resultType="AttendanceDay">
+		SELECT
+		<include refid="ydYuekaoqinColumns"/>
+		FROM yd_yuekaoqin a
+
+		<where>
+		<if test="startDate != null">
+			AND a.date &gt;= #{startDate}
+		</if>
+		<if test="endDate != null">
+			AND a.date &lt;= #{endDate}
+		</if>
+		</where>
+	</select>
+
+
+	
+	<insert id="insert">
+		INSERT INTO yd_yuekaoqin(
+
+			uid,
+			area_id,
+			dept_id,
+			name,
+			date,
+			status,
+			month,
+			createtime,
+			updatetime
+		) VALUES (
+
+			#{uid},
+			#{areaId},
+			#{deptId},
+			#{name},
+			#{date},
+			#{status},
+			#{month},
+			#{createDate},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE yd_yuekaoqin SET 	
+			uid = #{uid},
+			dept_id = #{deptId},
+			name = #{name},
+			date = #{date},
+			status = #{status},
+			createtime = #{createtime},
+			updatetime = #{updatetime}
+		WHERE id = #{id}
+	</update>
+
+	<update id="updateStatusById">
+		UPDATE yd_yuekaoqin SET
+		status = #{status},
+		updatetime = #{updatetime}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM yd_yuekaoqin
+		WHERE id = #{id}
+	</update>
+
+
+	<select id="getRoleNameByUid" resultType="java.lang.String">
+		SELECT
+		name
+		FROM sys_role a
+
+		where id = (select role_id from sys_user_role
+		<where>
+			user_id=#{uid}
+		</where>
+		)
+	</select>
+	
+</mapper>

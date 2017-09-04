@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.yuekaoqinall.dao.YdYeukaoqinAllDao">
+    
+	<sql id="ydYeukaoqinAllColumns">
+		a.id AS "id",
+		a.area_id AS "areaId",
+		a.proc_ins_id AS "procInsId",
+		a.att_month AS "attMonth",
+		a.ing_status AS "ingStatus",
+		a.isshi AS "isshi",
+		a.office_id AS "officeId",
+		a.office_name AS "officeName",
+		a.audit_status AS "auditStatus",
+		a.create_date AS "createDate",
+		a.update_date AS "updateDate"
+	</sql>
+	
+	
+	<sql id="ydYeukaoqinAllJoins">
+	</sql>
+    
+	<select id="get" resultType="YdYeukaoqinAll">
+		SELECT 
+			<include refid="ydYeukaoqinAllColumns"/>
+		FROM yd_yeukaoqin_all a
+		<include refid="ydYeukaoqinAllJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="YdYeukaoqinAll">
+		SELECT 
+			<include refid="ydYeukaoqinAllColumns"/>
+		FROM yd_yeukaoqin_all a 
+		<include refid="ydYeukaoqinAllJoins"/>
+		<where>
+			status='0'
+			
+			<if test="officeId != null and officeId != ''">
+				AND a.office_id = #{officeId}
+			</if>
+			<if test="officeName != null and officeName != ''">
+				AND a.office_name LIKE concat('%',#{officeName},'%')
+			</if>
+			<if test="attMonth != null and attMonth != ''">
+				AND a.att_month = #{attMonth}
+			</if>
+			<if test="auditStatus != null and auditStatus != ''">
+				AND a.audit_status = #{auditStatus}
+			</if>
+			<if test="isshi != null and isshi != ''">
+				AND a.isshi = #{isshi}
+			</if>
+			<if test="areaId != null and areaId != ''">
+				AND a.area_id = #{areaId}
+			</if>
+			<if test="isrenzikaoqin != null and isrenzikaoqin == 'renzikaoqinshenhe' ">
+				AND ( (a.ing_status >= '3' and a.isshi = 'false' ) or (   a.ing_status >= '2' and a.isshi = 'true') )   
+			</if>
+			<if test="isrenzikaoqin != null and isrenzikaoqin == 'renzikaoqin' ">
+				AND ( (a.ing_status >= '4' and a.isshi = 'false' ) or (   a.ing_status >= '3' and a.isshi = 'true') )   
+			</if>
+			<if test="isrenzikaoqin != null and isrenzikaoqin == 'xianjingli' ">
+				AND  a.ing_status >= '2' and a.isshi = 'false'     
+			</if>
+			<if test="isrenzikaoqin != null and isrenzikaoqin == 'bumenjingli' ">
+				AND  a.ing_status >= '1'      
+			</if>
+			<if test="isrenzikaoqin == null or isrenzikaoqin == 'bumenkaoqin' ">
+				AND a.ing_status >= '0'
+			</if>
+			
+				
+			
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.id DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	
+	<select id="findAllList" resultType="YdYeukaoqinAll">
+		SELECT 
+			<include refid="ydYeukaoqinAllColumns"/>
+		FROM yd_yeukaoqin_all a
+		<include refid="ydYeukaoqinAllJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO yd_yeukaoqin_all(
+			id,
+			proc_ins_id,
+			att_month,
+			office_id,
+			office_name,
+			audit_status,
+			create_date,
+			update_date
+		) VALUES (
+			#{id},
+			#{procInsId},
+			#{attMonth},
+			#{officeId},
+			#{officeName},
+			#{auditStatus},
+			#{createDate},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE yd_yeukaoqin_all SET 	
+			proc_ins_id = #{procInsId},
+			att_month = #{attMonth},
+			office_id = #{officeId},
+			office_name = #{officeName},
+			audit_status = #{auditStatus},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM yd_yeukaoqin_all
+		WHERE id = #{id}
+	</update>
+	
+	
+	<update id="updateIngstatusByid">
+	
+		UPDATE yd_yeukaoqin_all 
+		set ing_status=#{ingStatus},audit_status=#{auditStatus} 
+		WHERE id = #{id}
+		
+	</update>	
+	
+	<select id="getYuekaoqinAllByid" resultType="YdYeukaoqinAll">
+		select 
+		<include refid="ydYeukaoqinAllColumns"/>
+		from yd_yeukaoqin_all a
+		<where>
+			<if test="id != null or id != '' ">
+				AND a.id = #{id}
+			</if>
+		</where>
+	</select>
+	
+	
+	
+	<insert id="insertShenheInfo">
+		INSERT INTO yd_yeukaoqin_all(
+			att_month,
+			area_id,
+			office_id,
+			office_name,
+			ing_status,
+			audit_status,
+			isshi,
+			create_date,
+			update_date
+		) VALUES (
+			#{attMonth},
+			#{areaId},
+			#{officeId},
+			#{officeName},
+			#{ingStatus},
+			#{auditStatus},
+			#{isshi},
+			#{createDate},
+			#{updateDate}
+		)
+	</insert>
+	
+	
+	<select id="isinsertShenhe" resultType="YdYeukaoqinAll">
+		SELECT 
+			<include refid="ydYeukaoqinAllColumns"/>
+		FROM yd_yeukaoqin_all a
+		<include refid="ydYeukaoqinAllJoins"/>
+		<where>
+			<if test="attMonth != null and attMonth != ''">
+				AND a.att_month = #{attMonth}
+			</if>
+			<if test="office_id != null and office_id != ''">
+				AND a.office_id = #{office_id}
+			</if>
+		</where>		
+	</select>
+	
+	<select id="isUserInfo" resultType="AttendanceDay">
+		SELECT 
+			a.id
+		FROM yd_yuekaoqin a
+		<include refid="ydYeukaoqinAllJoins"/>
+		<where>
+			<if test="date != null and date != ''">
+				AND a.date = #{date}
+			</if>
+			<if test="uid != null and uid != ''">
+				AND a.uid = #{uid}
+			</if>
+		</where>		
+	</select>
+	
+	
+	<select id="getRoleByUId" resultType="Role">
+		select id,name from sys_role where id = 
+		(select role_id from sys_user_role where 
+			<if test="uid != null and uid != ''">
+				user_id = #{uid}
+			</if>
+		 )	
+	</select>
+	
+	
+	
+	
+</mapper>

@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.yd.dao.PunchcardRecordDao">
+    
+	<sql id="ydKaoqinColumns">
+		a.id AS "id",
+		a.u_id AS "uId",
+		a.user_name AS "userName",
+		a.dept_id AS "deptId",
+		a.cometime AS "cometime",
+		a.gotime AS "gotime",
+		a.addr AS "addr",
+		a.jiqi_num AS "jiqiNum",
+		a.attendance_date AS attendanceDate,
+		a.createtime AS "createtime",
+		a.updatetime AS "updatetime"
+	</sql>
+	
+	<sql id="ydKaoqinJoins">
+	</sql>
+
+	<select id="queryPunchcardRecordByUIdAndDate" resultType="PunchcardRecord">
+		SELECT
+		<include refid="ydKaoqinColumns"/>
+		FROM yd_kaoqin a
+		<where>
+			1=1
+		  <if test="uId != null and uId != ''">
+			  AND a.u_id = #{uId}
+		  </if>
+	  	  <if test="attendanceDate != null">
+			  AND a.attendance_date = #{attendanceDate}
+	  	  </if>
+		</where>
+	</select>
+    
+	<select id="get" resultType="PunchcardRecord">
+		SELECT 
+			<include refid="ydKaoqinColumns"/>
+		FROM yd_kaoqin a
+		<include refid="ydKaoqinJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="PunchcardRecord">
+		SELECT 
+			<include refid="ydKaoqinColumns"/>
+		FROM yd_kaoqin a
+		<include refid="ydKaoqinJoins"/>
+		<where>
+			
+			<if test="userName != null and userName != ''">
+				AND a.user_name LIKE
+					<if test="dbName == 'oracle'">'%'||#{userName}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{userName}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{userName},'%')</if>
+			</if>
+
+			<if test="uId != null">
+				AND a.u_id= #{uId}
+
+			</if>
+			<if test="attendanceDate != null">
+				<![CDATA[
+      				AND DATE_FORMAT(a.attendance_date, '%Y-%m-%d') =  DATE_FORMAT(#{attendanceDate}, '%Y-%m-%d')
+				]]>
+			</if>
+
+			<if test="beginDate != null">
+				AND a.attendance_date &gt;= #{beginDate}
+
+			</if>
+			<if test="endDate != null">
+				AND a.attendance_date &lt;= #{endDate}
+			</if>
+			<if test="kqType != null">
+				AND a.kq_type = #{kqType}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="PunchcardRecord">
+		SELECT 
+			<include refid="ydKaoqinColumns"/>
+		FROM yd_kaoqin a
+		<include refid="ydKaoqinJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO yd_kaoqin(
+			u_id,
+			user_name,
+			dept_id,
+			cometime,
+			gotime,
+			addr,
+			jiqi_num,
+			
+			attendance_date,
+			createtime,
+			updatetime
+		) VALUES (
+			#{uId},
+			#{userName},
+			#{deptId},
+			#{cometime},
+			#{gotime},
+			#{addr},
+			#{jiqiNum},
+			
+			#{attendanceDate},
+			#{createtime},
+			#{updatetime}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE yd_kaoqin SET 	
+			u_id = #{uId},
+			user_name = #{userName},
+			dept_id = #{deptId},
+			cometime = #{cometime},
+			gotime = #{gotime},
+			addr = #{addr},
+			jiqi_num = #{jiqiNum},
+			createtime = #{createtime},
+			updatetime = #{updatetime}
+		WHERE id = #{id}
+	</update>
+
+
+	<update id="updateById" >
+		update yd_kaoqin
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="uId != null">
+				u_id = #{uId},
+			</if>
+			<if test="userName != null">
+				user_name = #{userName},
+			</if>
+			<if test="deptId != null">
+				dept_id = #{deptId},
+			</if>
+			<if test="cometime != null">
+				cometime = #{cometime},
+			</if>
+			<if test="gotime != null">
+				gotime = #{gotime},
+			</if>
+			<if test="addr != null">
+				addr = #{addr},
+			</if>
+			<if test="jiqiNum != null">
+				jiqi_num = #{jiqiNum},
+			</if>
+			<if test="createtime != null">
+				createtime = #{createtime},
+			</if>
+			updatetime = now(),
+		</trim>
+		  where id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM yd_kaoqin
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
