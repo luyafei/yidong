@@ -175,8 +175,8 @@ public class YdYeukaoqinAllService extends CrudService<YdYeukaoqinAllDao, YdYeuk
 			re = 0;
 //		}catch(Exception e){
 //			e.printStackTrace();
-//		}
-		
+//		}贺宜文
+		 
 		return re;
 	}
 	
