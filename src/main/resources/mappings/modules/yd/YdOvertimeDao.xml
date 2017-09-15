@@ -124,20 +124,21 @@
 	</insert>
 	
 	<update id="update">
-		UPDATE yd_overtime SET 	
-			erp_name = #{erpName},
-			office_id = #{officeId},
-			office_name = #{officeName},
-			start_date = #{startDate},
-			end_date = #{endDate},
-			yd_type = #{ydType},
-			audit_type = #{auditType},
-			audit_level = #{auditLevel},
-			audit_status = #{auditStatus},
-			audit_user_no = #{auditUserNo},
-			audit_user_name = #{auditUserName},
-			remarks = #{remarks},
-			update_date = #{updateDate}
+		UPDATE yd_overtime
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="erpName != null and erpName !=''">erp_name = #{erpName},</if>
+			<if test="officeId != null and officeId != ''">office_id = #{officeId},</if>
+			<if test="officeName != null and officeName != ''">office_name = #{officeName},</if>
+			<if test="startDate != null and startDate != ''">start_date = #{startDate},</if>
+			<if test="endDate != null and endDate != ''">end_date = #{endDate},</if>
+			<if test="auditType != null and auditType != ''">audit_type = #{auditType},</if>
+			<if test="auditLevel != null and auditLevel != ''">audit_level = #{auditLevel},</if>
+			<if test="auditStatus != null and auditStatus != ''">audit_status = #{auditStatus},</if>
+			<if test="auditUserNo != null and auditUserNo != ''">audit_user_no = #{auditUserNo},</if>
+			<if test="auditUserName != null and auditUserName != ''">audit_user_name = #{auditUserName},</if>
+			<if test="remarks != null and remarks != ''">remarks = #{remarks},</if>
+			<if test="updateDate != null and updateDate != ''">update_date = #{updateDate}</if>
+		</trim>
 		WHERE id = #{id}
 	</update>
 	

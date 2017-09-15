@@ -89,6 +89,14 @@
 			</div>
 		</div>
 		<div class="control-group">
+			<label class="control-label">下级审核人：</label>
+			<div class="controls">
+				<form:select path="auditUserNo" class="input-xxlarge">
+					<form:options items="${templateList}" itemLabel="auditUserName" itemValue="auditUserLoginname" htmlEscape="false"/>
+				</form:select>
+			</div>
+		</div>
+		<div class="control-group">
 			<label class="control-label">备注：</label>
 			<div class="controls">
 				<form:textarea path="remarks" htmlEscape="false" rows="4" maxlength="100" class="input-xxlarge "/>

@@ -32,7 +32,8 @@ public class YdLeave extends DataEntity<YdLeave> {
 	private String auditUserName;		// 审核人
 	private Date beginCreateDate;		// 开始 创建时间
 	private Date endCreateDate;		// 结束 创建时间
-	
+	private String leaveType;		// 请假类型
+
 	public YdLeave() {
 		super();
 	}
@@ -160,5 +161,12 @@ public class YdLeave extends DataEntity<YdLeave> {
 	public void setAuditUserName(String auditUserName) {
 		this.auditUserName = auditUserName;
 	}
-	
+
+	public String getLeaveType() {
+		return leaveType;
+	}
+
+	public void setLeaveType(String leaveType) {
+		this.leaveType = leaveType;
+	}
 }

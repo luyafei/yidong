@@ -6,11 +6,14 @@ package com.thinkgem.jeesite.modules.yd.web;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.alibaba.fastjson.JSON;
 import com.thinkgem.jeesite.modules.sys.entity.User;
 import com.thinkgem.jeesite.modules.sys.utils.UserUtils;
-import com.thinkgem.jeesite.modules.yd.entity.YdAuditTemplate;
+import com.thinkgem.jeesite.modules.yd.entity.YDConstant;
+import com.thinkgem.jeesite.modules.yd.entity.YdLeave;
 import com.thinkgem.jeesite.modules.yd.service.IDayAttendanceService;
-import com.thinkgem.jeesite.modules.yd.service.YdAuditTemplateService;
+import com.thinkgem.jeesite.modules.ydaudittemp.entity.YdAuditTemplate;
+import com.thinkgem.jeesite.modules.ydaudittemp.service.YdAuditTemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,6 +28,9 @@ import com.thinkgem.jeesite.common.web.BaseController;
 import com.thinkgem.jeesite.common.utils.StringUtils;
 import com.thinkgem.jeesite.modules.yd.entity.YdOvertime;
 import com.thinkgem.jeesite.modules.yd.service.YdOvertimeService;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * 申请加班Controller
@@ -43,6 +49,11 @@ public class YdOvertimeController extends BaseController {
 
 	@Autowired
 	private IDayAttendanceService attendanceService;
+
+	@Autowired
+	private YdAuditTemplateService auditTemplateService;
+
+	private final String audit_type = "overtime_audit";
 	
 	@ModelAttribute
 	public YdOvertime get(@RequestParam(required=false) String id) {
@@ -89,6 +100,15 @@ public class YdOvertimeController extends BaseController {
 		ydOvertime.setErpName(user.getName());
 		ydOvertime.setOfficeId(user.getOffice().getId());
 		ydOvertime.setOfficeName(user.getOffice().getName());
+
+		YdAuditTemplate qtemp = new YdAuditTemplate();
+		qtemp.setAuditLevel(1);
+		qtemp.setRoles(user.getRoleIdList());
+		qtemp.setDept(user.getOffice().getId());
+		qtemp.setBusinessType(audit_type);
+		List<YdAuditTemplate> templateList = auditTemplateService.findList(qtemp);
+		////////////////
+		model.addAttribute("templateList",templateList);
 		model.addAttribute("ydOvertime",ydOvertime);
 		return "modules/yd/ydOvertimeForm";
 	}
@@ -115,33 +135,19 @@ public class YdOvertimeController extends BaseController {
 		if (!beanValidator(model, ydOvertime)){
 			return form(ydOvertime, model);
 		}
-		/**
-		 * 开启审核
-		 */
-		//根据加班id查新加班数据
-		User user = UserUtils.getUser();
-		YdAuditTemplate qydAuditTemplate = new YdAuditTemplate();
-		qydAuditTemplate.setBusinessType(ydOvertime.getAuditType());
-		qydAuditTemplate.setDept(user.getOffice().getId());
-		qydAuditTemplate.setAuditLevel(ydOvertime.getAuditLevel() + 1);//	下级审核级别
-
-		YdAuditTemplate auditTemplate = ydAuditTemplateService.get(qydAuditTemplate);
-
-		//如果是1级审核人 审核人直接给2级审核人进行审核
-		if (auditTemplate.getAuditUserLoginname().equals(user.getLoginName())){
-			qydAuditTemplate.setAuditLevel(ydOvertime.getAuditLevel() + 2);
-			auditTemplate = ydAuditTemplateService.get(qydAuditTemplate);
-		}
-
-		ydOvertime.setAuditUserNo(auditTemplate.getAuditUserLoginname());
-		ydOvertime.setAuditUserName(auditTemplate.getAuditUserName());
-		ydOvertime.setAuditLevel(auditTemplate.getAuditLevel());
 		ydOvertime.setAuditStatus("auditing");
+		ydOvertime.setAuditLevel(1);
 		ydOvertime.setRemarks(ydOvertime.getRemarks());
-
+		ydOvertime.setStartDate(ydOvertime.getStartDate());
+		ydOvertime.setEndDate(ydOvertime.getEndDate());
+		ydOvertime.setAuditUserName(UserUtils.getByLoginName(ydOvertime.getAuditUserNo()).getName());
+		ydOvertime.setAuditUserNo(ydOvertime.getAuditUserNo());
+		ydOvertime.setCreateDate(new Date());
+		ydOvertime.setUpdateDate(new Date());
 		ydOvertimeService.save(ydOvertime);
 		addMessage(redirectAttributes, "保存申请加班成功");
 		return "redirect:"+Global.getAdminPath()+"/yd/ydOvertime/list?repage";
+
 	}
 
 	/**
@@ -153,9 +159,15 @@ public class YdOvertimeController extends BaseController {
 	//@RequiresPermissions("yd:ydOvertime:view")
 	@RequestMapping(value = "autditform")
 	public String autditform(YdOvertime ydOvertime, Model model) {
-
-		//根据加班id查新加班数据
 		YdOvertime ydOvertime1 = ydOvertimeService.get(ydOvertime.getId());
+		Integer nowLeave = ydOvertime.getAuditLevel();
+		YdAuditTemplate qtemp = new YdAuditTemplate();
+		qtemp.setAuditLevel(nowLeave + 1);//下级
+		qtemp.setRoles(UserUtils.getByLoginName(ydOvertime1.getErpNo()).getRoleIdList());
+		qtemp.setDept(ydOvertime1.getOfficeId());
+		qtemp.setBusinessType(ydOvertime1.getAuditType());
+		List<YdAuditTemplate> templateList = auditTemplateService.findList(qtemp);
+		model.addAttribute("templateList",templateList);
 		model.addAttribute("ydOvertime",ydOvertime1);
 		return "modules/yd/ydOvertimeAuditForm";
 	}
@@ -163,47 +175,41 @@ public class YdOvertimeController extends BaseController {
 	//@RequiresPermissions("yd:ydOvertime:view")
 	@RequestMapping(value = "audit")
 	public String audit(YdOvertime ydOvertime, Model model) {
-		//根据加班id查新加班数据
 		User user = UserUtils.getUser();
 		YdOvertime ydOvertime1 = ydOvertimeService.get(ydOvertime.getId());
 		ydOvertime1.setAuditStatus(ydOvertime.getAuditStatus());
-		/**
-		 * 审核通过执行以下逻辑
-		 * 根据类型 级别查询下面审核人信息
-		 * 查询出下级更新  auditUserNo  auditUserName  auditLevel
-		 */
 		YdAuditTemplate qydAuditTemplate = new YdAuditTemplate();
 		qydAuditTemplate.setBusinessType(ydOvertime1.getAuditType());
-		qydAuditTemplate.setDept(user.getOffice().getId());
-		qydAuditTemplate.setAuditLevel(ydOvertime.getAuditLevel() + 1);//	下级审核级别
-		YdAuditTemplate auditTemplate = ydAuditTemplateService.get(qydAuditTemplate);
+		qydAuditTemplate.setDept(ydOvertime.getOfficeId());
+		qydAuditTemplate.setRoles(UserUtils.getByLoginName(ydOvertime1.getErpNo()).getRoleIdList());
+		qydAuditTemplate.setAuditUserLoginname(user.getLoginName());
+		qydAuditTemplate.setAuditLevel(ydOvertime.getAuditLevel());
+		List<YdAuditTemplate> templateList = auditTemplateService.findList(qydAuditTemplate);
 		//加班审核通过
 		if("pass".equals(ydOvertime.getAuditStatus())){
-			//判断是否还有下级
-			if (auditTemplate != null){
-				ydOvertime1.setAuditUserNo(auditTemplate.getAuditUserLoginname());
-				ydOvertime1.setAuditUserName(auditTemplate.getAuditUserName());
-				ydOvertime1.setAuditLevel(auditTemplate.getAuditLevel());
-				ydOvertime1.setAuditStatus("auditing");
-				ydOvertime1.setRemarks(ydOvertime.getRemarks());
-			}else {
+			if (templateList.get(0).isEnd(ydOvertime1.getAuditLevel())){
 				ydOvertime1.setAuditStatus("pass");
 				ydOvertime1.setRemarks(ydOvertime.getRemarks());
-				//补充考勤录入
 				logger.info("审核通过补充，天考勤记录");
 				User overTimeUser = UserUtils.getByLoginName(ydOvertime1.getErpNo());
 				attendanceService.createAttendanceDayByDate(
 						ydOvertime1.getStartDate(),ydOvertime1.getEndDate(),
-						overTimeUser,"6");
+						overTimeUser, YDConstant.time_type);
+			}else {
+				ydOvertime1.setAuditStatus("auditing");
+				ydOvertime1.setAuditLevel(ydOvertime1.getAuditLevel() + 1);//
+				ydOvertime1.setAuditUserNo(ydOvertime.getAuditUserNo());
+				ydOvertime1.setRemarks(ydOvertime.getRemarks());
+				ydOvertime1.setAuditUserName(UserUtils.getByLoginName(ydOvertime.getAuditUserNo()).getName());
 			}
 		}
 		//加班审核不通过
 		if("no".equals(ydOvertime.getAuditStatus())){
-			ydOvertime1.setAuditUserNo(auditTemplate.getAuditUserLoginname());
-			ydOvertime1.setAuditUserName(auditTemplate.getAuditUserName());
-			ydOvertime1.setAuditLevel(auditTemplate.getAuditLevel());
+			ydOvertime1.setAuditUserName(UserUtils.getUser().getName());
+			ydOvertime1.setAuditUserNo((UserUtils.getUser().getLoginName()));
 			ydOvertime1.setRemarks(ydOvertime.getRemarks());
 			ydOvertime1.setAuditStatus("no");
+			logger.info("加班审核不通过：{}", JSON.toJSONString(ydOvertime1));
 		}
 		ydOvertimeService.save(ydOvertime1);
 		return "redirect:"+Global.getAdminPath()+"/yd/ydOvertime/auditList?repage";

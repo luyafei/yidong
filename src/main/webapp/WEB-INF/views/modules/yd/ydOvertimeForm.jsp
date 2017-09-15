@@ -41,7 +41,7 @@
 		<!-- 部门id-->
 		<form:hidden path="officeId" value="${ydOvertime.officeId}"/>
 		<!-- 开始级别，没有指定人的是0 如果是指定人的 是 1-->
-		<form:hidden path="auditLevel" value="0"/>
+		<form:hidden path="auditLevel" value="1"/>
 		<!-- 保存的时候直接是 审核中 -->
 		<form:hidden path="auditStatus" value="passing"/>
 		<!-- 审核类型，每种审核会定义一种类型 在表中用部门区分 不同部门的审核流程 -->
@@ -81,6 +81,17 @@
 					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
 			</div>
 		</div>
+		${not empty templateList}
+
+				<div class="control-group">
+					<label class="control-label">审核人：</label>
+					<div class="controls">
+						<form:select path="auditUserNo" class="input-xxlarge">
+							<form:options items="${templateList}" itemLabel="auditUserName" itemValue="auditUserLoginname" htmlEscape="false"/>
+						</form:select>
+					</div>
+				</div>
+
 		<div class="control-group">
 			<label class="control-label">备注：</label>
 			<div class="controls">

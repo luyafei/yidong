@@ -70,20 +70,30 @@
 			<label class="control-label">开始时间：</label>
 			<div class="controls">
 				<input name="startDate" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate "
-					value="<fmt:formatDate value="${ydLeave.startDate}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
+					value="<fmt:formatDate value="${ydLeave.startDate}" pattern="yyyy-MM-dd"/>"
+					onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:false});"/>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">结束时间：</label>
 			<div class="controls">
 				<input name="endDate" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate "
-					value="<fmt:formatDate value="${ydLeave.endDate}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
+					value="<fmt:formatDate value="${ydLeave.endDate}" pattern="yyyy-MM-dd"/>"
+					onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:false});"/>
 			</div>
 		</div>
-
-
+		<c:choose>
+			<c:when test="${!empty templateList}">
+				<div class="control-group">
+					<label class="control-label">审核人：</label>
+					<div class="controls">
+						<form:select path="auditUserNo" class="input-xxlarge">
+							<form:options items="${templateList}" itemLabel="auditUserName" itemValue="auditUserLoginname" htmlEscape="false"/>
+						</form:select>
+					</div>
+				</div>
+			</c:when>
+		</c:choose>
 		<div class="control-group">
 			<label class="control-label">备注：</label>
 			<div class="controls">

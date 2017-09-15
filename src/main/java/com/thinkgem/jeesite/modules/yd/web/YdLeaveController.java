@@ -6,12 +6,14 @@ package com.thinkgem.jeesite.modules.yd.web;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.alibaba.fastjson.JSON;
 import com.thinkgem.jeesite.modules.sys.entity.User;
 import com.thinkgem.jeesite.modules.sys.utils.UserUtils;
-import com.thinkgem.jeesite.modules.yd.entity.YdAuditTemplate;
+import com.thinkgem.jeesite.modules.yd.entity.YDConstant;
 import com.thinkgem.jeesite.modules.yd.entity.YdOvertime;
 import com.thinkgem.jeesite.modules.yd.service.IDayAttendanceService;
-import com.thinkgem.jeesite.modules.yd.service.YdAuditTemplateService;
+import com.thinkgem.jeesite.modules.ydaudittemp.entity.YdAuditTemplate;
+import com.thinkgem.jeesite.modules.ydaudittemp.service.YdAuditTemplateService;
 import org.activiti.engine.impl.util.json.JSONObject;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,7 @@ import com.thinkgem.jeesite.common.utils.StringUtils;
 import com.thinkgem.jeesite.modules.yd.entity.YdLeave;
 import com.thinkgem.jeesite.modules.yd.service.YdLeaveService;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -48,6 +51,9 @@ public class YdLeaveController extends BaseController {
 
 	@Autowired
 	private IDayAttendanceService attendanceService;
+
+
+	private String auditType = "ydLeave_audit";//和字段表中的value 值相等
 	
 	@ModelAttribute
 	public YdLeave get(@RequestParam(required=false) String id) {
@@ -92,29 +98,31 @@ public class YdLeaveController extends BaseController {
 		ydLeave1.setOfficeId(user.getOffice().getId());
 		ydLeave1.setOfficeName(user.getOffice().getName());
 
-
+		//获取审核流程
 		YdAuditTemplate qtemp = new YdAuditTemplate();
 		qtemp.setAuditLevel(1);
-		qtemp.setBusinessType("ydLeave_audit");
+		qtemp.setRoles(user.getRoleIdList());
 		qtemp.setDept(user.getOffice().getId());
+		qtemp.setBusinessType(auditType);
 		List<YdAuditTemplate> templateList = auditTemplateService.findList(qtemp);
-		//20170502 修改
+		////////////////
+		model.addAttribute("templateList",templateList);
+		model.addAttribute("ydLeave",ydLeave1);
+		return "modules/yd/ydLeaveForm";
+	/*	//20170502 修改
 		//判断是否是审核人 如果是查询 level 2的审核人
 		for (YdAuditTemplate tem : templateList){
 			if (user.getLoginName().equals(tem.getAuditUserLoginname())){
 				logger.info("请假审核人是一级审核人！{}",user.getLoginName());
 				YdAuditTemplate qtemp2 = new YdAuditTemplate();
 				qtemp.setAuditLevel(2);
-				qtemp.setBusinessType("ydLeave_audit");
+				qtemp.setRole(user.getRole().getId());
 				qtemp.setDept(user.getOffice().getId());
 				templateList = auditTemplateService.findList(qtemp);
 			}
 
-		}
-		////////////////
-		model.addAttribute("templateList",templateList);
-		model.addAttribute("ydLeave",ydLeave1);
-		return "modules/yd/ydLeaveForm";
+		}*/
+
 	}
 
 	@RequestMapping(value = "show")
@@ -132,24 +140,11 @@ public class YdLeaveController extends BaseController {
 		}
 		//指定人审核不用查下级审核人
 		ydLeave.setAuditStatus("auditing");
-		YdAuditTemplate ydAuditTemplate = new YdAuditTemplate();
-		User retUser = UserUtils.getByLoginName(ydLeave.getAuditUserNo());
-		ydAuditTemplate.setDept(retUser.getOffice().getId());
-		ydAuditTemplate.setBusinessType("ydLeave_audit");
-		List<YdAuditTemplate> retydAuditTemplate = auditTemplateService.findList(ydAuditTemplate);
+		ydLeave.setStartDate(ydLeave.getStartDate());
+		ydLeave.setEndDate(ydLeave.getEndDate());
 		ydLeave.setAuditUserName(UserUtils.getByLoginName(ydLeave.getAuditUserNo()).getName());
-		/*if (null != retydAuditTemplate){
-			YdAuditTemplate two = null;
-			for(YdAuditTemplate temp : retydAuditTemplate){
-				if ("2".equals(temp.getAuditLevel())){
-					two = temp;
-				}
-				if (temp.getAuditUserLoginname().equals(UserUtils.getUser().getLoginName())
-						&& "1".equals(temp.getAuditLevel())){
-					ydLeave.setAuditUserName(null == two ? temp.getAuditUserName() : two.getAuditUserName());
-				}
-			}
-		}*/
+		ydLeave.setCreateDate(new Date());
+		ydLeave.setUpdateDate(new Date());
 		ydLeaveService.save(ydLeave);
 		addMessage(redirectAttributes, "保存异常申请成功");
 		return "redirect:"+Global.getAdminPath()+"/yd/ydLeave/list/?repage";
@@ -158,7 +153,7 @@ public class YdLeaveController extends BaseController {
 
 
 	/**
-	 * 审核和form页面
+	 * 审核form页面
 	 * @param ydLeave
 	 * @param model
 	 * @return
@@ -167,13 +162,27 @@ public class YdLeaveController extends BaseController {
 	@RequestMapping(value = "autditform")
 	public String autditform(YdLeave ydLeave, Model model) {
 
-		//根据加班id查新加班数据
 		YdLeave ydLeave1 = ydLeaveService.get(ydLeave.getId());
+		//根据当前审核级别查询出下级审核人
+		Integer nowLeave = ydLeave1.getAuditLevel();
+
+		YdAuditTemplate qtemp = new YdAuditTemplate();
+		qtemp.setAuditLevel(nowLeave + 1);//下级
+		qtemp.setRoles(UserUtils.getByLoginName(ydLeave.getErpNo()).getRoleIdList());
+		qtemp.setDept(ydLeave1.getOfficeId());
+		qtemp.setBusinessType(auditType);
+		List<YdAuditTemplate> templateList = auditTemplateService.findList(qtemp);
+		model.addAttribute("templateList",templateList);
 		model.addAttribute("ydLeave",ydLeave1);
 		return "modules/yd/ydLeaveAuditForm";
 	}
 
-
+	/**
+	 * 审核
+	 * @param ydLeave
+	 * @param model
+	 * @return
+	 */
 	@RequestMapping(value = "audit")
 	public String audit(YdLeave ydLeave, Model model) {
 		//根据加班id查新加班数据
@@ -182,19 +191,38 @@ public class YdLeaveController extends BaseController {
 		//异常审核通过
 		if("pass".equals(ydLeave.getAuditStatus())){
 			logger.info("考勤异常审核通过：{}", ydLeave.getId());
-			ydLeave1.setAuditStatus("pass");
+			//判断当前审核人是否是最后一级 如果是审核状态改给通过 pass  不是 是审核中 auditing
+			YdAuditTemplate qtemp = new YdAuditTemplate();
+			qtemp.setAuditLevel(ydLeave1.getAuditLevel());
+			qtemp.setRoles(UserUtils.getByLoginName(ydLeave.getErpNo()).getRoleIdList());
+			qtemp.setDept(ydLeave1.getOfficeId());
+			qtemp.setBusinessType(auditType);
+			qtemp.setAuditUserLoginname(user.getLoginName());
+			List<YdAuditTemplate> templateList = auditTemplateService.findList(qtemp);
 			ydLeave1.setRemarks(ydLeave.getRemarks());
-			logger.info("审核通过补充，天考勤记录");
-			User overTimeUser = UserUtils.getByLoginName(ydLeave1.getErpNo());
-			attendanceService.createAttendanceDayByDate(
-					ydLeave1.getStartDate(),ydLeave1.getEndDate(), overTimeUser,"7");
-
+			YdAuditTemplate template = templateList.get(0);
+			if (template.isEnd(ydLeave1.getAuditLevel())){//判断当权审核级别 是否达到最后一级
+				ydLeave1.setAuditStatus("pass");
+				logger.info("异常审核通过，审核通过补充，天考勤记录:{}", JSON.toJSONString(ydLeave1));
+				User overTimeUser = UserUtils.getByLoginName(ydLeave1.getErpNo());
+				attendanceService.createAttendanceDayByDate(
+						ydLeave1.getStartDate(), ydLeave1.getEndDate(), overTimeUser, ydLeave1.getLeaveType());
+			}else {//指定下级
+				ydLeave1.setAuditStatus("auditing");
+				ydLeave1.setAuditLevel(ydLeave1.getAuditLevel() + 1);//审核中当前级别 加1
+				ydLeave1.setAuditUserNo(ydLeave.getAuditUserNo());
+				ydLeave1.setRemarks(ydLeave.getRemarks());
+				ydLeave1.setAuditUserName(UserUtils.getByLoginName(ydLeave.getAuditUserNo()).getName());
+				logger.info("异常审核中:{}", JSON.toJSONString(ydLeave1));
+			}
 		}
 		//异常审核不通过
 		if("no".equals(ydLeave.getAuditStatus())){
-			logger.info("考勤异常审核不通过：{}", ydLeave.getId());
+			ydLeave1.setAuditUserName(UserUtils.getUser().getName());
+			ydLeave1.setAuditUserNo((UserUtils.getUser().getLoginName()));
 			ydLeave1.setAuditStatus("no");
 			ydLeave1.setRemarks(ydLeave.getRemarks());
+			logger.info("考勤异常审核不通过：{}", JSON.toJSONString(ydLeave1));
 		}
 		ydLeaveService.save(ydLeave1);
 		return "redirect:"+Global.getAdminPath()+"/yd/ydOvertime/auditList?repage";
