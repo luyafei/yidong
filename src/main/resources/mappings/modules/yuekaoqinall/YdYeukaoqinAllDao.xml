@@ -54,11 +54,11 @@
 			<if test="areaId != null and areaId != ''">
 				AND a.area_id = #{areaId}
 			</if>
-			<if test="isrenzikaoqin != null and isrenzikaoqin == 'renzikaoqinshenhe' ">
-				AND ( (a.ing_status >= '3' and a.isshi = 'false' ) or (   a.ing_status >= '2' and a.isshi = 'true') )   
-			</if>
 			<if test="isrenzikaoqin != null and isrenzikaoqin == 'renzikaoqin' ">
 				AND ( (a.ing_status >= '4' and a.isshi = 'false' ) or (   a.ing_status >= '3' and a.isshi = 'true') )   
+			</if>
+			<if test="isrenzikaoqin != null and isrenzikaoqin == 'renzikaoqinshenhe' ">
+				AND ( (a.ing_status >= '3' and a.isshi = 'false' ) or (   a.ing_status >= '2' and a.isshi = 'true') )   
 			</if>
 			<if test="isrenzikaoqin != null and isrenzikaoqin == 'xianjingli' ">
 				AND  a.ing_status >= '2' and a.isshi = 'false'     
