@@ -3,10 +3,14 @@
  */
 package com.thinkgem.jeesite.common.utils;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
+import org.joda.time.DateTime;
+import org.joda.time.Hours;
 
 /**
  * 时间计算工具类
@@ -320,5 +324,16 @@ public class TimeUtils {
         }
         return true;
     }
-    
+
+    /**
+     *
+     * @param startTime 开始时间
+     * @param endTime 结束时间
+     * @return
+     */
+    public static int getDiffHour(Date startTime,Date endTime) throws ParseException {
+        DateTime dt1 = new DateTime(startTime);
+        DateTime dt2 = new DateTime(endTime);
+        return  Hours.hoursBetween(dt1, dt2).getHours();
+    }
 }

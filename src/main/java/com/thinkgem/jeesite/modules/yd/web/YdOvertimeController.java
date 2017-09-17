@@ -5,21 +5,26 @@ package com.thinkgem.jeesite.modules.yd.web;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.ConstraintViolationException;
 
 import com.alibaba.fastjson.JSON;
+import com.thinkgem.jeesite.common.beanvalidator.BeanValidators;
+import com.thinkgem.jeesite.common.utils.excel.ImportExcel;
 import com.thinkgem.jeesite.modules.sys.entity.User;
 import com.thinkgem.jeesite.modules.sys.utils.UserUtils;
 import com.thinkgem.jeesite.modules.yd.entity.YDConstant;
-import com.thinkgem.jeesite.modules.yd.entity.YdLeave;
 import com.thinkgem.jeesite.modules.yd.service.IDayAttendanceService;
 import com.thinkgem.jeesite.modules.ydaudittemp.entity.YdAuditTemplate;
 import com.thinkgem.jeesite.modules.ydaudittemp.service.YdAuditTemplateService;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.thinkgem.jeesite.common.config.Global;
@@ -29,6 +34,7 @@ import com.thinkgem.jeesite.common.utils.StringUtils;
 import com.thinkgem.jeesite.modules.yd.entity.YdOvertime;
 import com.thinkgem.jeesite.modules.yd.service.YdOvertimeService;
 
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
@@ -53,7 +59,8 @@ public class YdOvertimeController extends BaseController {
 	@Autowired
 	private YdAuditTemplateService auditTemplateService;
 
-	private final String audit_type = "overtime_audit";
+	private String auditType = YDConstant.OVER_TIME_TYPE;
+
 	
 	@ModelAttribute
 	public YdOvertime get(@RequestParam(required=false) String id) {
@@ -105,7 +112,7 @@ public class YdOvertimeController extends BaseController {
 		qtemp.setAuditLevel(1);
 		qtemp.setRoles(user.getRoleIdList());
 		qtemp.setDept(user.getOffice().getId());
-		qtemp.setBusinessType(audit_type);
+		qtemp.setBusinessType(auditType);
 		List<YdAuditTemplate> templateList = auditTemplateService.findList(qtemp);
 		////////////////
 		model.addAttribute("templateList",templateList);
@@ -192,9 +199,15 @@ public class YdOvertimeController extends BaseController {
 				ydOvertime1.setRemarks(ydOvertime.getRemarks());
 				logger.info("审核通过补充，天考勤记录");
 				User overTimeUser = UserUtils.getByLoginName(ydOvertime1.getErpNo());
-				attendanceService.createAttendanceDayByDate(
-						ydOvertime1.getStartDate(),ydOvertime1.getEndDate(),
-						overTimeUser, YDConstant.time_type);
+				try {
+					attendanceService.createAttendanceDayByDate(
+                            ydOvertime1.getStartDate(),ydOvertime1.getEndDate(),
+                            overTimeUser, YDConstant.time_jb);
+				} catch (ParseException e) {
+					logger.info("审核通过生成加班记录失败",e);
+					addMessage(model, "审核请假记录失败！");
+					return "redirect:"+Global.getAdminPath()+"/yd/ydOvertime/auditList?repage";
+				}
 			}else {
 				ydOvertime1.setAuditStatus("auditing");
 				ydOvertime1.setAuditLevel(ydOvertime1.getAuditLevel() + 1);//
@@ -234,6 +247,60 @@ public class YdOvertimeController extends BaseController {
 		ydOvertimeService.delete(ydOvertime);
 		addMessage(redirectAttributes, "删除申请加班成功");
 		return "redirect:"+Global.getAdminPath()+"/yd/ydOvertime/list?repage";
+	}
+
+
+
+	/**
+	 * 导入加班申请
+	 * @param file
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@RequiresPermissions("yd:overtime:import")
+	@RequestMapping(value = "import", method= RequestMethod.POST)
+	public String importFile(MultipartFile file, RedirectAttributes redirectAttributes) {
+		try {
+			int successNum = 0;
+			int failureNum = 0;
+			StringBuilder failureMsg = new StringBuilder();
+			ImportExcel ei = new ImportExcel(file, 1, 0);
+			List<YdOvertime> list = ei.getDataList(YdOvertime.class);
+			for (YdOvertime overtime : list){
+				try{
+					//根据导入内容 补充overtime
+					ydOvertimeService.violation(overtime);
+					ydOvertimeService.completion(overtime);
+					ydOvertimeService.save(overtime);
+					successNum++;
+					/*if ("true".equals(checkLoginName("", user.getLoginName()))){
+						user.setPassword(SystemService.entryptPassword("123456"));
+						BeanValidators.validateWithException(validator, user);
+						systemService.saveUser(user);
+						successNum++;
+					}else{
+						failureMsg.append("<br/>登录名 "+user.getLoginName()+" 已存在; ");
+						failureNum++;
+					}*/
+				}catch(ConstraintViolationException ex){
+					failureMsg.append("<br/>加班申请 "+overtime.getErpName()+" 导入失败：");
+					List<String> messageList = BeanValidators.extractPropertyAndMessageAsList(ex, ": ");
+					for (String message : messageList){
+						failureMsg.append(message+"; ");
+						failureNum++;
+					}
+				}catch (Exception ex) {
+					failureMsg.append("<br/>加班申请 "+overtime.getErpName()+" 导入失败："+ex.getMessage());
+				}
+			}
+			if (failureNum>0){
+				failureMsg.insert(0, "，失败 "+failureNum+" 导入信息如下：");
+			}
+			addMessage(redirectAttributes, "已成功导入 "+successNum+" 条用户"+failureMsg);
+		} catch (Exception e) {
+			addMessage(redirectAttributes, "导入加班失败！失败信息："+e.getMessage());
+		}
+		return "redirect:" + adminPath + "/yd/ydOvertime/list?repage";
 	}
 
 }

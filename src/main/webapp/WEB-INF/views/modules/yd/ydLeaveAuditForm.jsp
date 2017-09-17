@@ -67,19 +67,28 @@
 		</div>
 
 		<div class="control-group">
-			<label class="control-label">开始时间：</label>
+			<label class="control-label">请假类型：</label>
 			<div class="controls">
-				<input name="startDate" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate "
-					value="<fmt:formatDate value="${ydLeave.startDate}" pattern="yyyy-MM-dd"/>"
-					onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:false});"/>
+				<form:select path="leaveType" class="input-xlarge ">
+					<form:option value="" label=""/>
+					<form:options items="${fns:getDictList('leave_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+				</form:select>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">结束时间：</label>
+			<label class="control-label">开始日期：</label>
+			<div class="controls">
+				<input name="startDate" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate "
+					   value="<fmt:formatDate value="${ydLeave.startDate}" pattern="yyyy-MM-dd"/>"
+					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:false});"/>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">结束日期：</label>
 			<div class="controls">
 				<input name="endDate" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate "
-					value="<fmt:formatDate value="${ydLeave.endDate}" pattern="yyyy-MM-dd"/>"
-					onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:false});"/>
+					   value="<fmt:formatDate value="${ydLeave.endDate}" pattern="yyyy-MM-dd"/>"
+					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:false});"/>
 			</div>
 		</div>
 		<c:choose>

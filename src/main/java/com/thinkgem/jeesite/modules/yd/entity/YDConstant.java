@@ -6,13 +6,19 @@ package com.thinkgem.jeesite.modules.yd.entity;
 public class YDConstant {
 
 
-    //////////////月考勤类型  请假类型 上半天 下半天 全天
-    public final  static String leave_sbt = "leave_sbt";
-    public final  static String leave_xbt = "leave_xbt";
-    public final  static String leave_qt = "leave_qt";
+    //////////////start月考勤类型  请假类型
+    public final  static String leave_sbt = "leave_sbt";//上半天
+    public final  static String leave_xbt = "leave_xbt";//下半天
+    public final  static String leave_qt = "leave_qt";//全天
+    public final static String time_jb = "6"; //加班
+    /////////////end月考勤类型
 
 
-    //////加班
-    public final static String time_type = "6";
+
+
+    //审核业务类型
+    public final static String OVER_TIME_TYPE = "overtime_audit"; //加班审核
+
+    public final static String LEAVE_TYPE = "ydLeave_audit";//请假审核
 
 }

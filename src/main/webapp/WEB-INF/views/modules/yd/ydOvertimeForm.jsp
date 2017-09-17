@@ -69,8 +69,8 @@
 			<label class="control-label">开始时间：</label>
 			<div class="controls">
 				<input name="startDate" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate "
-					value="<fmt:formatDate value="${ydOvertime.startDate}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
+					value="<fmt:formatDate value="${ydOvertime.startDate}" pattern="yyyy-MM-dd 17:00:00"/>"
+					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm',isShowClear:false});"/>
 			</div>
 		</div>
 		<div class="control-group">
@@ -78,7 +78,7 @@
 			<div class="controls">
 				<input name="endDate" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate "
 					value="<fmt:formatDate value="${ydOvertime.endDate}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
+					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm',isShowClear:false});"/>
 			</div>
 		</div>
 		${not empty templateList}

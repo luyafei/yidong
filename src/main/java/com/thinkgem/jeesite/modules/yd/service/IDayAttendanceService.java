@@ -3,6 +3,7 @@ package com.thinkgem.jeesite.modules.yd.service;
 import com.thinkgem.jeesite.modules.sys.entity.User;
 import com.thinkgem.jeesite.modules.yuekaoqin.entity.AttendanceDay;
 
+import java.text.ParseException;
 import java.util.Date;
 
 /**
@@ -31,5 +32,5 @@ public interface IDayAttendanceService {
 
     public void saveOrUpdate(AttendanceDay attendanceDay);
 
-    public void createAttendanceDayByDate(Date beginDate, Date endDate,User user,String attStatus);
+    public void createAttendanceDayByDate(Date beginDate, Date endDate,User user,String attStatus) throws ParseException;
 }

@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.ydaudittemp.dao.YdAuditTemplateDao">
+    
+	<sql id="ydAuditTemplateColumns">
+		a.id AS "id",
+		a.business_type AS "businessType",
+		a.audit_level AS "auditLevel",
+		a.audit_user_name AS "auditUserName",
+		a.audit_user_loginname AS "auditUserLoginname",
+		a.dept AS "dept",
+		a.dept_name AS "deptName",
+		a.count_level AS "countLevel",
+		a.create_date AS "createDate",
+		a.update_date AS "updateDate",
+		a.role_id AS "role"
+	</sql>
+	
+	<sql id="ydAuditTemplateJoins">
+		LEFT JOIN sys_office o6 ON o6.id = a.dept
+		LEFT JOIN sys_office o7 ON o7.id = a.dept_name
+	</sql>
+    
+	<select id="get" resultType="YdAuditTemplate">
+		SELECT 
+			<include refid="ydAuditTemplateColumns"/>
+		FROM yd_audit_template a
+		<include refid="ydAuditTemplateJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="YdAuditTemplate">
+		SELECT 
+			<include refid="ydAuditTemplateColumns"/>
+		FROM yd_audit_template a
+		<include refid="ydAuditTemplateJoins"/>
+		<where>
+			
+			<if test="businessType != null and businessType != ''">
+				AND a.business_type = #{businessType}
+			</if>
+			<if test="dept != null and dept != ''">
+				AND a.dept = #{dept}
+			</if>
+			<if test="role != null and role != ''">
+				AND a.role_id = #{role}
+			</if>
+			<if test="auditLevel != null and auditLevel != ''">
+				AND a.audit_level = #{auditLevel}
+			</if>
+			<if test="roles != null">
+				AND role_id in
+				<foreach item="item" index="index" collection="roles" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="YdAuditTemplate">
+		SELECT 
+			<include refid="ydAuditTemplateColumns"/>
+		FROM yd_audit_template a
+		<include refid="ydAuditTemplateJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO yd_audit_template(
+			business_type,
+			audit_level,
+			audit_user_name,
+			audit_user_loginname,
+			dept,
+			dept_name,
+			count_level,
+			create_date,
+			update_date,
+			role_id
+		) VALUES (
+			#{businessType},
+			#{auditLevel},
+			#{auditUserName},
+			#{auditUserLoginname},
+			#{dept},
+			#{deptName},
+			#{countLevel},
+			#{createDate},
+			#{updateDate},
+			#{role}
+
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE yd_audit_template SET 	
+			audit_level = #{auditLevel},
+			audit_user_name = #{auditUserName},
+			dept = #{dept},
+			dept_name = #{deptName},
+			count_level = #{countLevel},
+			role_id = #{role},
+			business_type = #{businessType}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM yd_audit_template
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

@@ -8,7 +8,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.time.DateFormatUtils;
+import org.joda.time.DateTime;
+import org.joda.time.Hours;
 
 /**
  * 日期工具类, 继承org.apache.commons.lang.time.DateUtils类
@@ -202,6 +205,13 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 	 */
 	@SuppressWarnings("unchecked")
 	public static List<Date> getDatesBetweenTwoDate(Date beginDate, Date endDate) {
+		DateTime stime = new DateTime(beginDate);
+		DateTime etime = new DateTime(endDate);
+		if (stime.getDayOfMonth() == etime.getDayOfMonth()){
+			List<Date> list = Lists.newArrayList();
+			list.add(beginDate);
+			return list;
+		}
 		List lDate = new ArrayList();
 		lDate.add(beginDate);//把开始时间加入集合
 		Calendar cal = Calendar.getInstance();
@@ -289,7 +299,8 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 
 		*/
 
-		List<Date> dates = getDatesBetweenTwoDate(new Date(),new Date());
+		Date after = parseDate("2017-09-16 00:00:00");
+		List<Date> dates = getDatesBetweenTwoDate(new Date(),after);
 		/*System.out.println();
 		System.out.println(formatDate(getFirstDayOfMonth(-1), "yyyy-MM"));*/
 

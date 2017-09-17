@@ -4,6 +4,7 @@ package com.thinkgem.jeesite.modules.yd.service;
 import com.thinkgem.jeesite.common.constant.AttendanceStatus;
 import com.thinkgem.jeesite.common.constant.AuditStatusEnum;
 import com.thinkgem.jeesite.common.utils.DateUtils;
+import com.thinkgem.jeesite.common.utils.TimeUtils;
 import com.thinkgem.jeesite.modules.oa.dao.LeaveDao;
 import com.thinkgem.jeesite.modules.oa.entity.Leave;
 import com.thinkgem.jeesite.modules.sys.dao.UserDao;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
@@ -179,7 +181,7 @@ public class DayAttendanceServiceImpl implements IDayAttendanceService {
      * user 考勤人员信息
      * attStatus 考勤状态
      */
-    public void createAttendanceDayByDate(Date beginDate, Date endDate,User user,String attStatus){
+    public void createAttendanceDayByDate(Date beginDate, Date endDate,User user,String attStatus) throws ParseException {
 
         //根据请假数据的 开始时间和结束时间查询出 修改
         List<Date> ldata = DateUtils.getDatesBetweenTwoDate(beginDate,endDate);
@@ -194,6 +196,7 @@ public class DayAttendanceServiceImpl implements IDayAttendanceService {
             yuekaoqin.setUpdateDate(new Date());
             yuekaoqin.setCreateDate(new Date());
             yuekaoqin.setStatus(attStatus);
+            yuekaoqin.setDuration((double) TimeUtils.getDiffHour(beginDate, endDate));
             this.saveOrUpdate(yuekaoqin);
         }
     }

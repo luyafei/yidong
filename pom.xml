@@ -59,7 +59,6 @@
 	
 	<!-- 设定主仓库，按设定顺序进行查找。 -->
 	<repositories>
-	
 		<!-- 如有Nexus私服, 取消注释并指向正确的服务器地址.
 		<repository>
 			<id>nexus-repos</id>
@@ -143,6 +142,13 @@
 	
 	<!-- 依赖项定义 -->
 	<dependencies>
+
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>2.9.9</version>
+		</dependency>
+
 		<dependency>
 			<groupId>com.alibaba</groupId>
 			<artifactId>fastjson</artifactId>

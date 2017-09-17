@@ -43,5 +43,21 @@ public class YdOvertimeService extends CrudService<YdOvertimeDao, YdOvertime> {
 	public void delete(YdOvertime ydOvertime) {
 		super.delete(ydOvertime);
 	}
-	
+
+	/**
+	 * 校验数据 是否合法
+	 * 校验数据是否已经存在
+	 * @param overtime
+	 */
+	public void violation(YdOvertime overtime) {
+
+	}
+
+	/**
+	 * 补全overtime
+	 * @param overtime
+	 */
+	public void completion(YdOvertime overtime) {
+
+	}
 }

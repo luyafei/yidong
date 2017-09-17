@@ -9,6 +9,7 @@
 		a.name AS "name",
 		a.month AS "month",
 		a.date AS "date",
+		a.duration AS "duration",
 		a.status AS "status",
 		a.createtime AS "createtime",
 		a.updatetime AS "updatetime"
@@ -113,7 +114,6 @@
 	
 	<insert id="insert">
 		INSERT INTO yd_yuekaoqin(
-
 			uid,
 			area_id,
 			dept_id,
@@ -121,10 +121,10 @@
 			date,
 			status,
 			month,
+			duration,
 			createtime,
 			updatetime
 		) VALUES (
-
 			#{uid},
 			#{areaId},
 			#{deptId},
@@ -132,6 +132,7 @@
 			#{date},
 			#{status},
 			#{month},
+			#{duration},
 			#{createDate},
 			#{updateDate}
 		)
@@ -144,6 +145,7 @@
 			name = #{name},
 			date = #{date},
 			status = #{status},
+			duration = #{duration},
 			createtime = #{createtime},
 			updatetime = #{updatetime}
 		WHERE id = #{id}

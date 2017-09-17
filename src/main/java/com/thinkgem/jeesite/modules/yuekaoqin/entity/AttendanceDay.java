@@ -30,6 +30,7 @@ public class AttendanceDay extends DataEntity<AttendanceDay> {
 	private Date updatetime;		// 更新时间
 	private String riqi;  //考勤日期简写
 	private String shenfen; //角色身份
+	private Double duration;//时间长度
 
 	///
 
@@ -167,5 +168,13 @@ public class AttendanceDay extends DataEntity<AttendanceDay> {
 
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
+	}
+
+	public Double getDuration() {
+		return duration;
+	}
+
+	public void setDuration(Double duration) {
+		this.duration = duration;
 	}
 }
