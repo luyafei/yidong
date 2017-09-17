@@ -63,8 +63,11 @@
 			<if test="isrenzikaoqin != null and isrenzikaoqin == 'xianjingli' ">
 				AND  a.ing_status >= '2' and a.isshi = 'false'     
 			</if>
-			<if test="isrenzikaoqin != null and isrenzikaoqin == 'bumenjingli' ">
+			<if test="isrenzikaoqin != null and isrenzikaoqin == 'shibumenjingli' ">
 				AND  a.ing_status >= '1'      
+			</if>
+			<if test="isrenzikaoqin != null and isrenzikaoqin == 'xianbumenjingli' ">
+				AND  a.ing_status >= '1' AND a.area_id = #{areaId}
 			</if>
 			<if test="isrenzikaoqin == null or isrenzikaoqin == 'bumenkaoqin' ">
 				AND a.ing_status >= '0'
