@@ -56,7 +56,7 @@
 		function butongguo(shenheid,offname){
 			if(window.confirm(''+offname+',【审核不通过】确定?')){
 				$("#shenheid").val(shenheid);
-				$("#shenhebutongguo").val("true");
+				$("#shenhebutongguo").val("false");
 				$("#searchForm").attr("action","/cdyidong/a/yuekaoqinall/ydYeukaoqinAll/");
 				$("#searchForm").submit();
 			}
