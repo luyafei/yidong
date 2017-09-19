@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.kaoqin.dao.YdYuekaoqinAdminDao">
+    
+	<sql id="ydYuekaoqinAdminColumns">
+		a.id AS "id",
+		a.taskno AS "taskno",
+		a.uid AS "uid",
+		a.area_id AS "area.id",
+		a.dept_id AS "deptId",
+		a.dept_name AS "deptName",
+		a.name AS "name",
+		a.date AS "date",
+		a.status AS "status",
+		a.month AS "month",
+		a.createtime AS "createtime",
+		a.updatetime AS "updatetime",
+		a.duration AS "duration",
+		a4.name AS "area.name"
+	</sql>
+	
+	<sql id="ydYuekaoqinAdminJoins">
+		LEFT JOIN sys_area a4 ON a4.id = a.area_id
+		LEFT JOIN sys_office o5 ON o5.id = a.dept_id
+	</sql>
+    
+	<select id="get" resultType="YdYuekaoqinAdmin">
+		SELECT 
+			<include refid="ydYuekaoqinAdminColumns"/>
+		FROM yd_yuekaoqin a
+		<include refid="ydYuekaoqinAdminJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="YdYuekaoqinAdmin">
+		SELECT 
+			<include refid="ydYuekaoqinAdminColumns"/>
+		FROM yd_yuekaoqin a
+		<include refid="ydYuekaoqinAdminJoins"/>
+		<where>
+			
+			<if test="deptId != null and deptId != ''">
+				AND a.dept_id = #{deptId}
+			</if>
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="date != null and date != ''">
+				AND a.date = #{date}
+			</if>
+			<if test="status != null and status != ''">
+				AND a.status = #{status}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="YdYuekaoqinAdmin">
+		SELECT 
+			<include refid="ydYuekaoqinAdminColumns"/>
+		FROM yd_yuekaoqin a
+		<include refid="ydYuekaoqinAdminJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO yd_yuekaoqin(
+			taskno,
+			uid,
+			area_id,
+			dept_id,
+			name,
+			date,
+			status,
+			month,
+			createtime,
+			updatetime,
+			duration,
+			dept_name
+		) VALUES (
+			#{taskno},
+			#{uid},
+			#{area.id},
+			#{deptId},
+			#{name},
+			#{date},
+			#{status},
+			#{month},
+			#{createtime},
+			#{updatetime},
+			#{duration},
+			#{deptName}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE yd_yuekaoqin SET
+			dept_id = #{deptId},
+			dept_name = #{deptName},
+			name = #{name},
+			date = #{date},
+			status = #{status}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM yd_yuekaoqin
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
