@@ -124,11 +124,12 @@ public class YdYeukaoqinAllController extends BaseController {
 				YdYeukaoqinAll y = new YdYeukaoqinAll();
 				y.setId(shenheid);
 				y.setIngStatus(yda.getIngStatus()+1);
+				y.setAuditStatus(yda.getAuditStatus());
 				ydYeukaoqinAllDao.updateIngstatusByid(y);
 				System.out.println("审核通过,中间人员审核"+shenheid);
 			}
 			
-		}else if(shenhebutongguo!=null && shenhebutongguo.equals("true")){
+		}else if(shenhebutongguo!=null && shenhebutongguo.equals("false")){
 			System.out.println("审核不通过"+shenheid);
 			YdYeukaoqinAll y = new YdYeukaoqinAll();
 			y.setId(shenheid);
@@ -200,6 +201,7 @@ public class YdYeukaoqinAllController extends BaseController {
 			String isshi = deptList.get(i).getIsshi();
 			System.out.println("ingStatus:"+ingStatus);
 			System.out.println("isshi:"+isshi);
+			System.out.println("shenfen:"+shenfen);
 			//市人资考勤审核员
 			if(isshi.equals("true") && ingStatus==2 && shenfen.equals("renzikaoqinshenhe") ){
 				deptList.get(i).setIsshenhe("true");
@@ -209,8 +211,8 @@ public class YdYeukaoqinAllController extends BaseController {
 			//县经理
 			}else if(isshi.equals("false") && ingStatus==2 && shenfen.equals("xianjingli") ){
 				deptList.get(i).setIsshenhe("true");
-			//部门经理
-			}else if( ingStatus==1 && shenfen.equals("bumenjingli") ){
+			//市和县的部门经理 审核状态为1 可进行审核
+			}else if( ingStatus==1 && (shenfen.equals("shibumenjingli") || shenfen.equals("xianbumenjingli") )  ){
 				deptList.get(i).setIsshenhe("true");
 			}else{
 				deptList.get(i).setIsshenhe("false");
