@@ -164,6 +164,19 @@
 	</select>
 	
 	
+	<select id="getYuekaoqinAllByEntity" resultType="YdYeukaoqinAll">
+		select 
+		<include refid="ydYeukaoqinAllColumns"/>
+		from yd_yeukaoqin_all a
+		<where>
+			<if test="attMonth != null or attMonth != '' ">
+				<if test="officeId != null or officeId != '' ">
+					a.att_month=#{attMonth} and office_id=#{officeId} and ing_status!=0
+				</if>
+			</if>
+		</where>
+	</select>
+	
 	
 	<insert id="insertShenheInfo">
 		INSERT INTO yd_yeukaoqin_all(
@@ -229,6 +242,22 @@
 			</if>
 		 )	
 	</select>
+	
+	
+	
+	
+	<update id="updateYuekaoqinStatus">
+	
+		UPDATE yd_yuekaoqin 
+		set status=#{status}
+		WHERE id = #{id}
+		
+	</update>	
+	
+	<select id="getAreaName" resultType="string">
+		select name from sys_area where id = #{areaId};
+	</select>
+	
 	
 	
 	

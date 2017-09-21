@@ -52,7 +52,7 @@
 </head>
 <body>
 <div id="importBox" class="hide">
-	<form id="importForm" action="${ctx}/yuekaoqinall/ydYeukaoqinAll/import" method="post" enctype="multipart/form-data"
+	<form id="importForm" action="${ctx}/yuekaoqinall/ydYeukaoqinAll/import_yulan" method="post" enctype="multipart/form-data"
 		  class="form-search" style="padding-left:20px;text-align:center;" onsubmit="loading('正在导入，请稍等...');"><br/>
 		<input id="uploadFile" name="file" type="file" style="width:330px"/><br/><br/>　　
 		<input id="btnImportSubmit" class="btn btn-primary" type="submit" value="   导    入   "/>
@@ -141,6 +141,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<th>区域</th>
 				<th>部门名称</th>
 				<th>月份</th>
 				<th>审核状态</th>
@@ -153,6 +154,9 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="ydYeukaoqinAll">
 			<tr>
+				<td>
+					${ydYeukaoqinAll.areaName}
+				</td>
 				<td>
 					${ydYeukaoqinAll.officeName}
 				</td>

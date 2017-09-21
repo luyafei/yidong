@@ -33,5 +33,11 @@ public interface YdYeukaoqinAllDao extends CrudDao<YdYeukaoqinAll> {
 	
 	public YdYeukaoqinAll getYuekaoqinAllByid(@Param("id") String id);
 	
+	public YdYeukaoqinAll getYuekaoqinAllByEntity(YdYeukaoqinAll ydYeukaoqinAll);
+	
+	public void updateYuekaoqinStatus(@Param("id") String id , @Param("status") String status);
+	
+	public String getAreaName(@Param("areaId") String areaId );
+	
 	
 }

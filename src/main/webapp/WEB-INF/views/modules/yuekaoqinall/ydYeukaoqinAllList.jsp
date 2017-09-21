@@ -146,6 +146,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<th>区域</th>
 				<th>部门名称</th>
 				<th>月份</th>
 				<th>审核状态</th>
@@ -158,6 +159,9 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="ydYeukaoqinAll">
 			<tr>
+				<td>
+					${ydYeukaoqinAll.areaName}
+				</td>
 				<td>
 					${ydYeukaoqinAll.officeName}
 				</td>

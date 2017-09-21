@@ -18,6 +18,7 @@ public class YdYeukaoqinAll extends DataEntity<YdYeukaoqinAll> {
 	
 	private static final long serialVersionUID = 1L;
 	private String areaId;
+	private String areaName;
 	private String procInsId;		// 流程实力id
 	private String attMonth;		// 考勤月份
 	private String officeId;		// 部门id
@@ -32,6 +33,14 @@ public class YdYeukaoqinAll extends DataEntity<YdYeukaoqinAll> {
 	
 	
 	
+	public String getAreaName() {
+		return areaName;
+	}
+
+	public void setAreaName(String areaName) {
+		this.areaName = areaName;
+	}
+
 	public String getIsshenhe() {
 		return isshenhe;
 	}

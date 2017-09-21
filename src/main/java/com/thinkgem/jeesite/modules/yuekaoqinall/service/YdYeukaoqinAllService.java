@@ -70,20 +70,19 @@ public class YdYeukaoqinAllService extends CrudService<YdYeukaoqinAllDao, YdYeuk
 		super.delete(ydYeukaoqinAll);
 	}
 	
+	public YdYeukaoqinAll isDaoru(YdYeukaoqinAll ydYeukaoqinAll){
+		return ydYeukaoqinAllDao.getYuekaoqinAllByEntity(ydYeukaoqinAll);
+	}
+	
 	
 	@Transactional
-	public int importOver (MultipartFile file , StringBuilder failureMsg, RedirectAttributes redirectAttributes) throws Exception{
+	public int importOver (User user , List<Yuekaoqin31Import> list , StringBuilder failureMsg, RedirectAttributes redirectAttributes) throws Exception{
 		int re = -1; 
 		try{
 			int successNum = 0;
 			int failureNum = 0;
 			StringBuffer shibaiNames = new StringBuffer();
-			String filenamess = file.getOriginalFilename().replaceFirst("[.].*", "").trim();
-			
-			ImportExcel ei = new ImportExcel(file, 0, 0);
-			List<Yuekaoqin31Import> list = ei.getDataList(Yuekaoqin31Import.class);
-			
-			User user = UserUtils.getUser();
+			String months = list.get(0).getMonth();
 			
 			Area area = user.getOffice().getArea();
 			System.out.println(area.getId());
@@ -114,34 +113,47 @@ public class YdYeukaoqinAllService extends CrudService<YdYeukaoqinAllDao, YdYeuk
 				attendanceDay.setDeptId(u2.getOffice().getId());
 				attendanceDay.setName(yuekaoqin31.getName());
 				attendanceDay.setAreaId(area.getId());
-				attendanceDay.setMonth(filenamess);
+				attendanceDay.setMonth(months);
 				
 				attendanceDay.setCreateDate(new Date());
 				attendanceDay.setUpdateDate(new Date());
 				
 				for(int i=1;i<=31;i++){
 					
-					Method method = null;
-					if(i<10){
-						method = Yuekaoqin31Import.class.getMethod("getRi0"+i, null);
-					}else{
-						method = Yuekaoqin31Import.class.getMethod("getRi"+i, null);
-					}
-					String riValue = method.invoke(yuekaoqin31).toString();
-					if(riValue==null || riValue.equals("")){
-						continue;
-					}
-					String dist_value = DictUtils.getDictValue( riValue , "AttendanceStatus", "");
-					if(i<10){
-						attendanceDay.setDate(new SimpleDateFormat("yyyyMMdd").parse(filenamess+"0"+i));
-					}else{
-						attendanceDay.setDate(new SimpleDateFormat("yyyyMMdd").parse(filenamess+i));
-					}
-					attendanceDay.setStatus(dist_value);
-					AttendanceDay isuserinfo = ydYeukaoqinAllDao.isUserInfo(attendanceDay.getUid(),attendanceDay.getDate());
-					if(isuserinfo==null){
-//						attendanceService.saveOrUpdate(attendanceDay);
-						attendanceDayDao.insert(attendanceDay);
+					try {
+					
+						Method method = null;
+						if(i<10){
+							method = Yuekaoqin31Import.class.getMethod("getRi0"+i, null);
+						}else{
+							method = Yuekaoqin31Import.class.getMethod("getRi"+i, null);
+						}
+						String riValue = method.invoke(yuekaoqin31).toString().trim();
+						if(riValue==null || riValue.equals("")){
+							continue;
+						}
+						String dist_value = DictUtils.getDictValue( riValue , "AttendanceStatus", "");
+						if(i<10){
+							attendanceDay.setDate(new SimpleDateFormat("yyyyMMdd").parse(months+"0"+i));
+						}else{
+							attendanceDay.setDate(new SimpleDateFormat("yyyyMMdd").parse(months+i));
+						}
+						attendanceDay.setStatus(dist_value);
+						//判断此用户是否存在这天的考勤状态
+						AttendanceDay isuserinfo = ydYeukaoqinAllDao.isUserInfo(attendanceDay.getUid(),attendanceDay.getDate());
+	//					System.out.println("riValue:"+riValue);
+	//					System.out.println("dist_value:"+dist_value);
+						if(isuserinfo==null){
+	//						attendanceService.saveOrUpdate(attendanceDay);
+							attendanceDayDao.insert(attendanceDay);
+						}else if(!riValue.equals("正常")){
+							//此次状态不是正常  则进行更新
+	//						System.out.println("此次状态不是正常  则进行更新:"+riValue);
+							ydYeukaoqinAllDao.updateYuekaoqinStatus(isuserinfo.getId(), dist_value);
+						}
+					
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
 					
 				}
@@ -160,7 +172,7 @@ public class YdYeukaoqinAllService extends CrudService<YdYeukaoqinAllDao, YdYeuk
 					isshi = "true";
 				}
 				YdYeukaoqinAll yda = new YdYeukaoqinAll();
-				yda.setAttMonth(filenamess);
+				yda.setAttMonth(months);
 				yda.setAreaId(area.getId());
 				yda.setOfficeId(office.getId());
 				yda.setOfficeName(office.getName());
@@ -170,10 +182,10 @@ public class YdYeukaoqinAllService extends CrudService<YdYeukaoqinAllDao, YdYeuk
 				yda.setCreateDate(new Date());
 //				yda.setUpdateDate(new Date());
 				
-				System.out.println("插入待审核数据,att_month:"+filenamess+",office_id:"+office.getId()+",office_name:"+office.getName());
+				System.out.println("插入待审核数据,att_month:"+months+",office_id:"+office.getId()+",office_name:"+office.getName());
 				
 				
-				YdYeukaoqinAll reInfo = ydYeukaoqinAllDao.isinsertShenhe(filenamess,office.getId());
+				YdYeukaoqinAll reInfo = ydYeukaoqinAllDao.isinsertShenhe(months,office.getId());
 				
 				if(reInfo==null){
 					ydYeukaoqinAllDao.insertShenheInfo(yda);
@@ -183,8 +195,7 @@ public class YdYeukaoqinAllService extends CrudService<YdYeukaoqinAllDao, YdYeuk
 				
 			}
 			
-			
-			failureMsg.insert(0, "，成功条数:"+successNum +",失败条数:"+failureNum+shibaiNames!=null?"失败人:"+shibaiNames:"");
+			failureMsg.insert(0, "，成功条数:"+successNum +",失败条数:"+failureNum+ (shibaiNames.length()>0?"失败人:"+shibaiNames:"") );
 			
 			re = 0;
 		}catch(Exception e){

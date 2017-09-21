@@ -8,7 +8,9 @@ import java.util.ArrayList;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -199,9 +201,19 @@ public class YdYeukaoqinAllController extends BaseController {
 			deptList.get(i).setLable(status_value);
 			int ingStatus = deptList.get(i).getIngStatus();
 			String isshi = deptList.get(i).getIsshi();
+			String areaid = deptList.get(i).getAreaId();
+			
+			String areaName = ydYeukaoqinAllDao.getAreaName(areaid);
+			
 			System.out.println("ingStatus:"+ingStatus);
 			System.out.println("isshi:"+isshi);
 			System.out.println("shenfen:"+shenfen);
+			System.out.println("areaName:"+areaName);
+			
+			if(areaName!=null){
+				deptList.get(i).setAreaName(areaName);
+			}
+			
 			//市人资考勤审核员
 			if(isshi.equals("true") && ingStatus==2 && shenfen.equals("renzikaoqinshenhe") ){
 				deptList.get(i).setIsshenhe("true");
@@ -361,9 +373,15 @@ public class YdYeukaoqinAllController extends BaseController {
 		Page<YdYeukaoqinAll> page = ydYeukaoqinAllService.findPage(new Page<YdYeukaoqinAll>(request, response), ydYeukaoqinAll); 
 		List<YdYeukaoqinAll> deptList = page.getList();
 		for(int i=0;i<deptList.size();i++){
+			
+			String areaName = ydYeukaoqinAllDao.getAreaName(deptList.get(i).getAreaId());
+			System.out.println("areaName:"+areaName);
+			deptList.get(i).setAreaName(areaName);
+			
 			String status_value = deptList.get(i).getAuditStatus();
 //			String lable = DictUtils.getDictLabels(status_value, "audit_status", "hyw");
 			deptList.get(i).setLable(status_value);
+			
 		}
 		
 		if(pageNo!=null && !pageNo.equals("")) page.setPageNo(Integer.parseInt(pageNo));
@@ -479,7 +497,7 @@ public class YdYeukaoqinAllController extends BaseController {
     			String uid = ykq.getUid();
     			String thisriqi = new SimpleDateFormat("dd").format(ykq.getDate());
     			//获取状态对用的中文
-    			String lable = DictUtils.getDictLabels(ykq.getStatus(), "AttendanceStatus", "hyw");
+    			String lable = DictUtils.getDictLabels(ykq.getStatus(), "AttendanceStatus", "");
     			int isykq = -1;
     			for( Yuekaoqin31 ykq31 : ykq31List){
     				//存在实体
@@ -558,23 +576,52 @@ public class YdYeukaoqinAllController extends BaseController {
 		return re;
 	}
 	
+	private Map<String,List<Yuekaoqin31Import>> importCache = new HashMap<String, List<Yuekaoqin31Import>>();
+	
 	//TODO 导入
 	@RequestMapping(value = "import", method= RequestMethod.POST)
-	public String importFile(MultipartFile file, RedirectAttributes redirectAttributes) {
+	public String importFile( RedirectAttributes redirectAttributes , HttpServletRequest request) {
 		try {
 			
+			String isimport = request.getParameter("isimport");
+			System.out.println("=========开始导入月考勤=========="+isimport);
 			StringBuilder failureMsg = new StringBuilder();
 			int re = -1;
 			try{
-				re = ydYeukaoqinAllService.importOver(file , failureMsg , redirectAttributes);
+				User user = UserUtils.getUser();
+					
+				if(importCache.get(user.getId())!=null){
+					
+					if(isimport!=null && isimport.equals("false")){
+						//删除缓存
+						importCache.remove(user.getId());
+						System.out.println("删除缓存,剩余缓存个数..."+importCache.size() );
+					}else if(isimport!=null && isimport.equals("true")){
+						
+						List<Yuekaoqin31Import> list = importCache.get(user.getId());
+						if(list.size()>0){
+							re = ydYeukaoqinAllService.importOver(user ,list ,  failureMsg , redirectAttributes);
+							if(re==0){
+								addMessage(redirectAttributes, "已成功导入 "+failureMsg);
+							}else{
+								addMessage(redirectAttributes, "倒入失败,请检查数据格式是否正确 "+failureMsg);
+							}
+						}else{
+							addMessage(redirectAttributes, "倒入失败,文件没有找到内容. "+failureMsg);
+						}
+						
+					}else{
+						addMessage(redirectAttributes, "倒入失败,请重新登录后重试. "+failureMsg);
+					}
+					
+				}else{
+					addMessage(redirectAttributes, "帐号异常,请重新登录后重试. "+failureMsg);
+				}
+					
+				
+				
 			}catch(Exception e){
 				e.printStackTrace();
-			}
-			
-			if(re==0){
-				addMessage(redirectAttributes, "已成功导入 "+failureMsg);
-			}else{
-				addMessage(redirectAttributes, "倒入失败,请检查数据格式是否正确 "+failureMsg);
 			}
 			
 		} catch (Exception e) {
@@ -585,7 +632,74 @@ public class YdYeukaoqinAllController extends BaseController {
 		System.out.println("跳转:"+adminPath + "/yuekaoqinall/ydYeukaoqinAllList2");
 		
 		return "redirect:"  + adminPath + "/yuekaoqinall/ydYeukaoqinAll/deptkaoqin";
-//		return "modules/yuekaoqinall/ydYeukaoqinAllList2";
+		
+	}
+	
+	
+	//TODO 导入预览
+	@RequestMapping(value = "import_yulan")//, method= RequestMethod.POST
+	public String import_yulan(MultipartFile file, RedirectAttributes redirectAttributes , Model model ) {
+		try {
+			
+			//判断当月考勤是否已提交
+			System.out.println("=========开始预览月考勤==========");
+			
+			String filenamess = file.getOriginalFilename().replaceFirst("[.].*", "").trim();
+			
+			if(!filenamess.matches("\\d{6}")){
+				addMessage(redirectAttributes, "请先选择正确的文件格式");
+				return "redirect:"  + adminPath + "/yuekaoqinall/ydYeukaoqinAll/deptkaoqin";
+			}
+			
+			User user = UserUtils.getUser();
+			String officeId = user.getOffice().getId();
+			System.out.println("officeId:"+officeId);
+			System.out.println("attMonth:"+filenamess);
+			YdYeukaoqinAll ydYeukaoqinAll = new YdYeukaoqinAll();
+			ydYeukaoqinAll.setAttMonth(filenamess);
+			ydYeukaoqinAll.setOfficeId(officeId);
+			YdYeukaoqinAll isdaoru = ydYeukaoqinAllService.isDaoru(ydYeukaoqinAll);
+			
+			if(isdaoru!=null && isdaoru.getAttMonth()!=null && !isdaoru.getAttMonth().equals("")){
+				System.out.println("当月考勤已提交审核，不能导入");
+				addMessage(redirectAttributes, "倒入失败,当月考勤已提交审核，不能导入");
+				return "redirect:"  + adminPath + "/yuekaoqinall/ydYeukaoqinAll/deptkaoqin";
+			}
+			
+			ImportExcel ei = new ImportExcel(file, 0, 0);
+			List<Yuekaoqin31Import> list_old = ei.getDataList(Yuekaoqin31Import.class);
+			List<Yuekaoqin31Import> list_new = new ArrayList<Yuekaoqin31Import>();
+			System.out.println("文件行数："+list_old.size());
+			
+			for (int i = 0; i < list_old.size(); i++) {
+				if(list_old==null || list_old.get(i)==null || list_old.get(i).getUid()==null || list_old.get(i).getUid().trim().equals("") ){
+				}else{
+					list_new.add(list_old.get(i));
+				}
+			}
+			System.out.println("去空之后的文件行数："+list_new.size());
+			
+			if(list_new.size()==0){
+				System.out.println("不能导入空文件");
+				addMessage(redirectAttributes, "倒入失败,不能导入空文件");
+				return "redirect:"  + adminPath + "/yuekaoqinall/ydYeukaoqinAll/deptkaoqin";
+			}
+			
+			list_new.get(0).setMonth(filenamess);
+			
+			//将此用户提交的excel存入缓存中
+			importCache.put(user.getId(), list_new);
+			model.addAttribute("isnull", "false");
+			model.addAttribute("list", list_new);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			addMessage(redirectAttributes, "导入失败！失败信息："+e.getMessage());
+		}
+		
+		System.out.println("跳转预览页:modules/yuekaoqinall/ydYeukaoqinYulan");
+		
+		return "modules/yuekaoqinall/ydYeukaoqinYulan";
 		
 	}
 	
