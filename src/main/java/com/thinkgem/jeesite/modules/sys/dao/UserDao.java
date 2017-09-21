@@ -19,10 +19,17 @@ public interface UserDao extends CrudDao<User> {
 	
 	/**
 	 * 根据登录名称查询用户
-	 * @param loginName
+	 * @param user.loginName
 	 * @return
 	 */
 	public User getByLoginName(User user);
+
+	/**
+	 * 根据员工号查询员工信息
+	 * @param user.no
+	 * @return
+	 */
+	public User getByUserNo(User user);
 
 	/**
 	 * 通过OfficeId获取用户列表，仅返回用户id和name（树查询用户时用）

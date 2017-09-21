@@ -3,12 +3,18 @@
  */
 package com.thinkgem.jeesite.modules.kaoqin.entity;
 
+import com.thinkgem.jeesite.common.utils.DateUtils;
+import com.thinkgem.jeesite.common.utils.StringUtils;
+import com.thinkgem.jeesite.common.utils.excel.annotation.ExcelField;
+import com.thinkgem.jeesite.modules.sys.entity.User;
+import com.thinkgem.jeesite.modules.sys.utils.UserUtils;
 import org.hibernate.validator.constraints.Length;
 import com.thinkgem.jeesite.modules.sys.entity.Area;
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import com.thinkgem.jeesite.common.persistence.DataEntity;
+import org.springframework.util.Assert;
 
 /**
  * 月考勤记录 增删改查Entity
@@ -51,6 +57,7 @@ public class YdYuekaoqinAdmin extends DataEntity<YdYuekaoqinAdmin> {
 	}
 	
 	@Length(min=1, max=11, message="uid长度必须介于 1 和 50 之间")
+	@ExcelField(title="工 号", fieldType = String.class,align=2, sort=20)
 	public String getUid() {
 		return uid;
 	}
@@ -58,7 +65,7 @@ public class YdYuekaoqinAdmin extends DataEntity<YdYuekaoqinAdmin> {
 	public void setUid(String uid) {
 		this.uid = uid;
 	}
-	
+
 	public Area getArea() {
 		return area;
 	}
@@ -66,7 +73,7 @@ public class YdYuekaoqinAdmin extends DataEntity<YdYuekaoqinAdmin> {
 	public void setArea(Area area) {
 		this.area = area;
 	}
-	
+
 	@Length(min=0, max=255, message="dept_id长度必须介于 0 和 255 之间")
 	public String getDeptId() {
 		return deptId;
@@ -75,7 +82,7 @@ public class YdYuekaoqinAdmin extends DataEntity<YdYuekaoqinAdmin> {
 	public void setDeptId(String deptId) {
 		this.deptId = deptId;
 	}
-	
+
 	@Length(min=0, max=255, message="name长度必须介于 0 和 255 之间")
 	public String getName() {
 		return name;
@@ -85,7 +92,7 @@ public class YdYuekaoqinAdmin extends DataEntity<YdYuekaoqinAdmin> {
 		this.name = name;
 	}
 	
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	@JsonFormat(pattern = "yyyy-MM-dd")
 	public Date getDate() {
 		return date;
 	}
@@ -94,7 +101,7 @@ public class YdYuekaoqinAdmin extends DataEntity<YdYuekaoqinAdmin> {
 		this.date = date;
 	}
 	
-	@Length(min=0, max=100, message="status长度必须介于 0 和 100 之间")
+	@ExcelField(title="上班状态", align=2, sort=23,dictType="yuekaoqinadmin")
 	public String getStatus() {
 		return status;
 	}
@@ -103,7 +110,6 @@ public class YdYuekaoqinAdmin extends DataEntity<YdYuekaoqinAdmin> {
 		this.status = status;
 	}
 	
-	@Length(min=0, max=255, message="考勤日期长度必须介于 0 和 255 之间")
 	public String getMonth() {
 		return month;
 	}
@@ -152,5 +158,29 @@ public class YdYuekaoqinAdmin extends DataEntity<YdYuekaoqinAdmin> {
 
 	public void setUno(String uno) {
 		this.uno = uno;
+	}
+
+	public void completion(){
+		if(StringUtils.isNotBlank(getUno()) &&  UserUtils.get(getUno()) != null){// 用户id
+			User user = UserUtils.get(getUno());
+			this.setDeptName(user.getOffice().getName());
+			this.setDeptId(user.getOffice().getId());
+			this.setArea(user.getOffice().getArea());
+			this.setMonth((DateUtils.formatDate(getDate(), "yyyyMM")));
+			this.setName(user.getName());
+			this.setUid(user.getNo());//工号
+			this.setCreatetime(new Date());
+			this.setUpdateDate(new Date());
+		}else if(StringUtils.isNotBlank(getUid()) && UserUtils.getByUno(getUid()) != null){//工号
+			User user = UserUtils.getByUno(getUid());
+			this.setDeptName(user.getOffice().getName());
+			this.setDeptId(user.getOffice().getId());
+			this.setArea(user.getOffice().getArea());
+			this.setMonth((DateUtils.formatDate(getDate(), "yyyyMM")));
+			this.setName(user.getName());
+			this.setUno(user.getId());
+			this.setCreatetime(new Date());
+			this.setUpdateDate(new Date());
+		}
 	}
 }

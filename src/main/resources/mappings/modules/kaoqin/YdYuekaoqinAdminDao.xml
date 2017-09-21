@@ -15,8 +15,8 @@
 		a.month AS "month",
 		a.createtime AS "createtime",
 		a.updatetime AS "updatetime",
-		a.duration AS "duration",
-		a4.name AS "area.name"
+		a.duration AS "duration"
+
 	</sql>
 	
 	<sql id="ydYuekaoqinAdminJoins">
@@ -30,6 +30,13 @@
 		FROM yd_yuekaoqin a
 		<include refid="ydYuekaoqinAdminJoins"/>
 		WHERE a.id = #{id}
+	</select>
+
+	<select id="getYuekaoqinAdminBydud" resultType="YdYuekaoqinAdmin">
+		SELECT
+		<include refid="ydYuekaoqinAdminColumns"/>
+		FROM yd_yuekaoqin a
+		WHERE a.dept_id = #{deptId} and a.uid = #{uid} and a.date = #{date}
 	</select>
 	
 	<select id="findList" resultType="YdYuekaoqinAdmin">

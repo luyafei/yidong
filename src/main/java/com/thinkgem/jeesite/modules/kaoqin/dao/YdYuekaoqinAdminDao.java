@@ -14,5 +14,7 @@ import com.thinkgem.jeesite.modules.kaoqin.entity.YdYuekaoqinAdmin;
  */
 @MyBatisDao
 public interface YdYuekaoqinAdminDao extends CrudDao<YdYuekaoqinAdmin> {
+
+    public YdYuekaoqinAdmin getYuekaoqinAdminBydud(YdYuekaoqinAdmin yuekaoqinAdmin);
 	
 }

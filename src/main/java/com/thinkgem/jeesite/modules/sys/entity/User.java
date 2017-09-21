@@ -68,6 +68,7 @@ public class User extends DataEntity<User> {
 		this.loginName = loginName;
 	}
 
+
 	public User(Role role){
 		super();
 		this.role = role;

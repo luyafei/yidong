@@ -81,6 +81,27 @@ public class UserUtils {
 		}
 		return user;
 	}
+
+	/**
+	 * 根据ID获取用户
+	 * @param no
+	 * @return 取不到返回null
+	 */
+	public static User getByUno(String no){
+		User user = (User)CacheUtils.get(USER_CACHE, USER_CACHE_ID_ + no);
+		if (user ==  null){
+			User quser = new User();
+			quser.setNo(no);
+			user = userDao.getByUserNo(quser);
+			if (user == null){
+				return null;
+			}
+			user.setRoleList(roleDao.findList(new Role(user)));
+			CacheUtils.put(USER_CACHE, USER_CACHE_ID_ + user.getNo(), user);
+			CacheUtils.put(USER_CACHE, USER_CACHE_LOGIN_NAME_ + user.getNo(), user);
+		}
+		return user;
+	}
 	
 	/**
 	 * 根据登录名获取用户

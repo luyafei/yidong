@@ -67,7 +67,7 @@
 			<div class="controls">
 				<form:select path="status" class="input-xlarge ">
 					<form:option value="" label=""/>
-					<form:options items="${fns:getDictList('AttendanceStatus')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+					<form:options items="${fns:getDictList('yuekaoqinadmin')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 				</form:select>
 			</div>
 		</div>
