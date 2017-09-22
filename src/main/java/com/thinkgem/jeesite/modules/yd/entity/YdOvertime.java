@@ -3,6 +3,7 @@
  */
 package com.thinkgem.jeesite.modules.yd.entity;
 
+import com.thinkgem.jeesite.common.utils.excel.annotation.ExcelField;
 import org.hibernate.validator.constraints.Length;
 
 import java.util.Date;
@@ -19,6 +20,7 @@ public class YdOvertime extends DataEntity<YdOvertime> {
 	
 	private static final long serialVersionUID = 1L;
 	private String erpNo;		// 申请人登录账号
+	@ExcelField(title = "姓名",sort = 20,type = 0,fieldType = String.class)
 	private String erpName;		// 申请人名称
 	private String officeId;		// 部门id
 	private String officeName;		// 部门名称
@@ -30,8 +32,14 @@ public class YdOvertime extends DataEntity<YdOvertime> {
 	private String auditStatus;		// 审核状态
 	private String auditUserNo;		// 审核人登录帐号
 	private String auditUserName;		// 审核人
+	@ExcelField(title = "日期",sort = 30,type = 0,fieldType = String.class)
 	private Date beginCreateDate;		// 开始 创建时间
 	private Date endCreateDate;		// 结束 创建时间
+
+	@ExcelField(title = "工号",sort = 10,type = 0,fieldType = String.class)
+	private String userNo;
+	private String Duration;
+
 	
 	public YdOvertime() {
 		super();
