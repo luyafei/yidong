@@ -33,6 +33,7 @@ public class YdLeave extends DataEntity<YdLeave> {
 	private Date beginCreateDate;		// 开始 创建时间
 	private Date endCreateDate;		// 结束 创建时间
 	private String leaveType;		// 请假类型
+	private String duration;		//时长
 
 	public YdLeave() {
 		super();
@@ -169,4 +170,13 @@ public class YdLeave extends DataEntity<YdLeave> {
 	public void setLeaveType(String leaveType) {
 		this.leaveType = leaveType;
 	}
+
+	public String getDuration() {
+		return duration;
+	}
+
+	public void setDuration(String duration) {
+		this.duration = duration;
+	}
 }
+

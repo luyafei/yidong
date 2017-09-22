@@ -32,5 +32,5 @@ public interface IDayAttendanceService {
 
     public void saveOrUpdate(AttendanceDay attendanceDay);
 
-    public void createAttendanceDayByDate(Date beginDate, Date endDate,User user,String attStatus) throws ParseException;
+    public void createAttendanceDayByDate(Date beginDate, Date endDate,User user,String attStatus,Double diff) throws ParseException;
 }

@@ -20,25 +20,37 @@ public class YdOvertime extends DataEntity<YdOvertime> {
 	
 	private static final long serialVersionUID = 1L;
 	private String erpNo;		// 申请人登录账号
-	@ExcelField(title = "姓名",sort = 20,type = 0,fieldType = String.class)
-	private String erpName;		// 申请人名称
+
 	private String officeId;		// 部门id
 	private String officeName;		// 部门名称
 	private Date startDate;		// 开始时间
 	private Date endDate;		// 结束时间
+
+
 	private String ydType;		// 1 请假  2加班
 	private String auditType;		// 审核类型
 	private Integer auditLevel;		// 当前审核级别
 	private String auditStatus;		// 审核状态
 	private String auditUserNo;		// 审核人登录帐号
-	private String auditUserName;		// 审核人
-	@ExcelField(title = "日期",sort = 30,type = 0,fieldType = String.class)
+
+
 	private Date beginCreateDate;		// 开始 创建时间
 	private Date endCreateDate;		// 结束 创建时间
 
 	@ExcelField(title = "工号",sort = 10,type = 0,fieldType = String.class)
 	private String userNo;
-	private String Duration;
+	@ExcelField(title = "姓名",sort = 20,type = 0,fieldType = String.class)
+	private String erpName;		// 申请人名称
+	@ExcelField(title = "开始时间",sort = 30,type = 0,fieldType = String.class)
+	private String importSTime;//导入开始时间
+	@ExcelField(title = "结束时间",sort = 35,type = 0,fieldType = String.class)
+	private String importETime;//导入开始时间
+
+	@ExcelField(title = "审核人工号",sort = 40,type = 0,fieldType = String.class)
+	private String auditUserName;		// 审核人
+
+	@ExcelField(title = "时长度",sort = 50,type = 0,fieldType = String.class)
+	private String duration;
 
 	
 	public YdOvertime() {
@@ -168,5 +180,38 @@ public class YdOvertime extends DataEntity<YdOvertime> {
 
 	public void setAuditType(String auditType) {
 		this.auditType = auditType;
+	}
+
+	public String getUserNo() {
+		return userNo;
+	}
+
+	public void setUserNo(String userNo) {
+		this.userNo = userNo;
+	}
+
+	public String getDuration() {
+		return duration;
+	}
+
+	public void setDuration(String duration) {
+		this.duration = duration;
+	}
+
+
+	public String getImportSTime() {
+		return importSTime;
+	}
+
+	public void setImportSTime(String importSTime) {
+		this.importSTime = importSTime;
+	}
+
+	public String getImportETime() {
+		return importETime;
+	}
+
+	public void setImportETime(String importETime) {
+		this.importETime = importETime;
 	}
 }

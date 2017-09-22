@@ -181,11 +181,11 @@ public class DayAttendanceServiceImpl implements IDayAttendanceService {
      * user 考勤人员信息
      * attStatus 考勤状态
      */
-    public void createAttendanceDayByDate(Date beginDate, Date endDate,User user,String attStatus) throws ParseException {
+    public void createAttendanceDayByDate(Date beginDate, Date endDate,User user,String attStatus, Double duration) throws ParseException {
 
         //根据请假数据的 开始时间和结束时间查询出 修改
         List<Date> ldata = DateUtils.getDatesBetweenTwoDate(beginDate,endDate);
-        for (Date d : ldata){
+        for (Date d : ldata) {
             AttendanceDay yuekaoqin = new AttendanceDay();
             yuekaoqin.setDate(d);
             yuekaoqin.setUid(user.getNo());
@@ -199,6 +199,8 @@ public class DayAttendanceServiceImpl implements IDayAttendanceService {
             yuekaoqin.setDuration((double) TimeUtils.getDiffHour(beginDate, endDate));
             this.saveOrUpdate(yuekaoqin);
         }
+
+
     }
 
 

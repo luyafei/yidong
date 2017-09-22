@@ -83,7 +83,7 @@ public class UserUtils {
 	}
 
 	/**
-	 * 根据ID获取用户
+	 * 根据员工号获取用户
 	 * @param no
 	 * @return 取不到返回null
 	 */

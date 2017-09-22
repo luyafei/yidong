@@ -5,10 +5,10 @@ package com.thinkgem.jeesite.common.constant;
  */
 public enum AuditStatusEnum {
 
-    AUDIT_STATUS_YEAS("1","通过"),
-    AUDIT_STATUS_NO("0","不通过"),
-    AUDIT_STATUS_PASSING("2","审核中"),
-    AUDIT_STATUS_NOT_AUDITED("0","未审核");
+    AUDIT_STATUS_YEAS("pass","通过"),
+    AUDIT_STATUS_NO("no","不通过"),
+    AUDIT_STATUS_PASSING("auditing","审核中"),
+    AUDIT_STATUS_NOT_AUDITED("audit","未审核");
 
 
     private String status;

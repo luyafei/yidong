@@ -48,6 +48,9 @@
 			<if test="auditLevel != null and auditLevel != ''">
 				AND a.audit_level = #{auditLevel}
 			</if>
+			<if test="auditUserName != null and auditUserName != ''">
+				AND a.audit_user_name = #{auditUserName}
+			</if>
 			<if test="roles != null">
 				AND role_id in
 				<foreach item="item" index="index" collection="roles" open="(" separator="," close=")">

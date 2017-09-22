@@ -51,9 +51,6 @@ public class YdOvertimeController extends BaseController {
 	private YdOvertimeService ydOvertimeService;
 
 	@Autowired
-	private YdAuditTemplateService ydAuditTemplateService;
-
-	@Autowired
 	private IDayAttendanceService attendanceService;
 
 	@Autowired
@@ -201,8 +198,8 @@ public class YdOvertimeController extends BaseController {
 				User overTimeUser = UserUtils.getByLoginName(ydOvertime1.getErpNo());
 				try {
 					attendanceService.createAttendanceDayByDate(
-                            ydOvertime1.getStartDate(),ydOvertime1.getEndDate(),
-                            overTimeUser, YDConstant.time_jb);
+                            ydOvertime1.getStartDate(),ydOvertime1.getEndDate(), overTimeUser, YDConstant.time_jb,
+							StringUtils.isNotBlank(ydOvertime1.getDuration()) ? Double.valueOf(ydOvertime1.getDuration()) : null);
 				} catch (ParseException e) {
 					logger.info("审核通过生成加班记录失败",e);
 					addMessage(model, "审核请假记录失败！");
@@ -257,14 +254,14 @@ public class YdOvertimeController extends BaseController {
 	 * @param redirectAttributes
 	 * @return
 	 */
-	@RequiresPermissions("yd:overtime:import")
+	/*@RequiresPermissions("yd:overtime:import")*/
 	@RequestMapping(value = "import", method= RequestMethod.POST)
 	public String importFile(MultipartFile file, RedirectAttributes redirectAttributes) {
 		try {
 			int successNum = 0;
 			int failureNum = 0;
 			StringBuilder failureMsg = new StringBuilder();
-			ImportExcel ei = new ImportExcel(file, 1, 0);
+			ImportExcel ei = new ImportExcel(file, 0, 0);
 			List<YdOvertime> list = ei.getDataList(YdOvertime.class);
 			for (YdOvertime overtime : list){
 				try{
@@ -273,15 +270,7 @@ public class YdOvertimeController extends BaseController {
 					ydOvertimeService.completion(overtime);
 					ydOvertimeService.save(overtime);
 					successNum++;
-					/*if ("true".equals(checkLoginName("", user.getLoginName()))){
-						user.setPassword(SystemService.entryptPassword("123456"));
-						BeanValidators.validateWithException(validator, user);
-						systemService.saveUser(user);
-						successNum++;
-					}else{
-						failureMsg.append("<br/>登录名 "+user.getLoginName()+" 已存在; ");
-						failureNum++;
-					}*/
+
 				}catch(ConstraintViolationException ex){
 					failureMsg.append("<br/>加班申请 "+overtime.getErpName()+" 导入失败：");
 					List<String> messageList = BeanValidators.extractPropertyAndMessageAsList(ex, ": ");
@@ -296,7 +285,7 @@ public class YdOvertimeController extends BaseController {
 			if (failureNum>0){
 				failureMsg.insert(0, "，失败 "+failureNum+" 导入信息如下：");
 			}
-			addMessage(redirectAttributes, "已成功导入 "+successNum+" 条用户"+failureMsg);
+			addMessage(redirectAttributes, "已成功导入 "+successNum+" 条"+failureMsg);
 		} catch (Exception e) {
 			addMessage(redirectAttributes, "导入加班失败！失败信息："+e.getMessage());
 		}

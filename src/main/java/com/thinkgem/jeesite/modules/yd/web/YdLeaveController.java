@@ -191,7 +191,8 @@ public class YdLeaveController extends BaseController {
 				User overTimeUser = UserUtils.getByLoginName(ydLeave1.getErpNo());
 				try {
 					attendanceService.createAttendanceDayByDate(
-                            ydLeave1.getStartDate(), ydLeave1.getEndDate(), overTimeUser, ydLeave1.getLeaveType());
+                            ydLeave1.getStartDate(), ydLeave1.getEndDate(), overTimeUser, ydLeave1.getLeaveType(),
+							StringUtils.isNotBlank(ydLeave1.getDuration()) ? Double.valueOf(ydLeave1.getDuration()) : null);
 				} catch (ParseException e) {
 					logger.info("审核通过生成异常记录失败",e);
 					addMessage(model,"审核请假记录失败！");
