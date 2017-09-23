@@ -163,9 +163,23 @@
 				 <td>
 					${ydYeukaoqinAll.attMonth}
 				</td>
-				
 				<td>
-					${ydYeukaoqinAll.auditStatus}
+				${ydYeukaoqinAll.auditStatus}
+					<c:if test="${ydYeukaoqinAll.ingStatus=='1' && ydYeukaoqinAll.isshi=='true'}">
+						(等待部门经理审核)
+					</c:if>
+					<c:if test="${ydYeukaoqinAll.ingStatus=='2' && ydYeukaoqinAll.isshi=='true'}">
+						(等待人资考勤审核员审核)
+					</c:if>
+					<c:if test="${ydYeukaoqinAll.ingStatus=='1' && ydYeukaoqinAll.isshi=='false'}">
+						(等待部门经理审核)
+					</c:if>
+					<c:if test="${ydYeukaoqinAll.ingStatus=='2' && ydYeukaoqinAll.isshi=='false'}">
+						(等待县经理审核)
+					</c:if>
+					<c:if test="${ydYeukaoqinAll.ingStatus=='3' && ydYeukaoqinAll.isshi=='false'}">
+						(等待人资考勤审核员审核)
+					</c:if>
 				</td>
 				<td>
 					<c:if test="${ydYeukaoqinAll.lable=='未提交' || ydYeukaoqinAll.lable=='不通过'}">
