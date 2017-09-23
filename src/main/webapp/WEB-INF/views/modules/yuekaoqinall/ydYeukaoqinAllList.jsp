@@ -106,11 +106,17 @@
 		<ul class="ul-form">
 		
 		
-			<c:if test="${shenfen!='shibumenjingli'  }">
+			<%-- <c:if test="${shenfen!='shibumenjingli'  }">
 				<li><label>部门名称：</label>
 					<form:input path="officeName" htmlEscape="false" maxlength="255" class="input-medium"/>
 				</li>
-			</c:if>
+			</c:if> --%>
+			
+			<li >
+				<label class="control-label">部门名称：</label>
+				<sys:treeselect id="office" name="officeId" value="${testData.office.id}" labelName="office.name" labelValue="${testData.office.name}"
+					title="部门" url="/sys/office/treeData?type=2" cssClass="" allowClear="true" notAllowSelectParent="true"/>
+			</li>
 			
 			<li ><label>月份：</label>
 				<form:input path="attMonth" htmlEscape="false" type="month" maxlength="255" class="input-medium" value="${yuefen}" />（格式：201601）
