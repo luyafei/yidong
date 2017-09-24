@@ -6,6 +6,7 @@ package com.thinkgem.jeesite.modules.sys.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.thinkgem.jeesite.common.utils.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,6 +43,15 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 			return dao.findByParentIdsLike(office);
 		}
 		return  new ArrayList<Office>();
+	}
+
+	public Office findchildrenOffByParName(String parName,String childName){
+		for (Office e : UserUtils.getOfficeList()){
+			if (parName.equals(e.getParent().getName()) && childName.equals(e.getName())){
+				return e;
+			}
+		}
+		return null;
 	}
 	
 	@Transactional(readOnly = false)

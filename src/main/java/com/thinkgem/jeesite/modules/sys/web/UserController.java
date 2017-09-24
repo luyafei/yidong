@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 
+import com.thinkgem.jeesite.modules.sys.service.OfficeService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -49,6 +50,10 @@ public class UserController extends BaseController {
 
 	@Autowired
 	private SystemService systemService;
+
+	@Autowired
+	private OfficeService officeService;
+
 	
 	@ModelAttribute
 	public User get(@RequestParam(required=false) String id) {
@@ -197,6 +202,12 @@ public class UserController extends BaseController {
 			List<User> list = ei.getDataList(User.class);
 			for (User user : list){
 				try{
+					Office of = officeService.findchildrenOffByParName(user.getCompany().getName(),user.getOffice().getName());
+					if (null == of){
+						throw new Exception(user.getCompany().getName() + " 公司下未找到对应部门 ");
+					}else {
+						user.setOffice(of);
+					}
 					if ("true".equals(checkLoginName("", user.getLoginName()))){
 						user.setPassword(SystemService.entryptPassword("123456"));
 						BeanValidators.validateWithException(validator, user);
