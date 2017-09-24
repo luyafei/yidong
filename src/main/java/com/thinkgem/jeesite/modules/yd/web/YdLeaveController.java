@@ -7,12 +7,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.alibaba.fastjson.JSON;
+import com.thinkgem.jeesite.common.utils.DateUtils;
 import com.thinkgem.jeesite.modules.sys.entity.User;
 import com.thinkgem.jeesite.modules.sys.utils.UserUtils;
 import com.thinkgem.jeesite.modules.yd.entity.YDConstant;
 import com.thinkgem.jeesite.modules.yd.service.IDayAttendanceService;
 import com.thinkgem.jeesite.modules.ydaudittemp.entity.YdAuditTemplate;
 import com.thinkgem.jeesite.modules.ydaudittemp.service.YdAuditTemplateService;
+import com.thinkgem.jeesite.modules.yuekaoqinall.service.YdYeukaoqinAllService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -49,6 +51,9 @@ public class YdLeaveController extends BaseController {
 
 	@Autowired
 	private IDayAttendanceService attendanceService;
+
+	@Autowired
+	private YdYeukaoqinAllService ydYeukaoqinAllService;
 
 
 	private String auditType = YDConstant.LEAVE_TYPE;
@@ -119,6 +124,11 @@ public class YdLeaveController extends BaseController {
 	//@RequiresPermissions("yd:ydLeave:edit")
 	@RequestMapping(value = "save")
 	public String save(YdLeave ydLeave, Model model, RedirectAttributes redirectAttributes) {
+		Boolean flag = ydYeukaoqinAllService.isAudit(DateUtils.formatDate(ydLeave.getStartDate(), "yyyyMM"), ydLeave.getOfficeId());
+		if(!flag){
+			addMessage(redirectAttributes, "月考勤上报中或者已审核完成不允许操作");
+			return "redirect:"+Global.getAdminPath()+"/yd/ydLeave/list?repage";
+		}
 		if (!beanValidator(model, ydLeave)){
 			return form(ydLeave, model);
 		}

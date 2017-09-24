@@ -10,6 +10,7 @@ import javax.validation.ConstraintViolationException;
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.thinkgem.jeesite.common.beanvalidator.BeanValidators;
+import com.thinkgem.jeesite.common.utils.DateUtils;
 import com.thinkgem.jeesite.common.utils.excel.ExportExcel;
 import com.thinkgem.jeesite.common.utils.excel.ImportExcel;
 import com.thinkgem.jeesite.modules.kaoqin.entity.YdYuekaoqinAdmin;
@@ -143,6 +144,12 @@ public class YdOvertimeController extends BaseController {
 	//@RequiresPermissions("yd:ydOvertime:edit")
 	@RequestMapping(value = "save")
 	public String save(YdOvertime ydOvertime, Model model, RedirectAttributes redirectAttributes) {
+		Boolean flag = ydYeukaoqinAllService.isAudit(DateUtils.formatDate(ydOvertime.getStartDate(), "yyyyMM"), ydOvertime.getOfficeId());
+		if(!flag){
+			addMessage(redirectAttributes, "月考勤上报中或者已审核完成不允许操作");
+			return "redirect:"+Global.getAdminPath()+"/yd/ydOvertime/list?repage";
+		}
+
 		if (!beanValidator(model, ydOvertime)){
 			return form(ydOvertime, model);
 		}
