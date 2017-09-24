@@ -46,10 +46,10 @@ public class YdOvertime extends DataEntity<YdOvertime> {
 	@ExcelField(title = "结束时间",sort = 35,type = 0,fieldType = String.class)
 	private String importETime;//导入开始时间
 
-	@ExcelField(title = "审核人工号",sort = 40,type = 0,fieldType = String.class)
+	@ExcelField(title = "审核人姓名",sort = 40,type = 0,fieldType = String.class)
 	private String auditUserName;		// 审核人
 
-	@ExcelField(title = "时长度",sort = 50,type = 0,fieldType = String.class)
+	//@ExcelField(title = "时长度",sort = 50,type = 0,fieldType = String.class)
 	private String duration;
 
 	

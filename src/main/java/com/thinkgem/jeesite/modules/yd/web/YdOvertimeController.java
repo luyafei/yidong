@@ -8,14 +8,18 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 
 import com.alibaba.fastjson.JSON;
+import com.google.common.collect.Lists;
 import com.thinkgem.jeesite.common.beanvalidator.BeanValidators;
+import com.thinkgem.jeesite.common.utils.excel.ExportExcel;
 import com.thinkgem.jeesite.common.utils.excel.ImportExcel;
+import com.thinkgem.jeesite.modules.kaoqin.entity.YdYuekaoqinAdmin;
 import com.thinkgem.jeesite.modules.sys.entity.User;
 import com.thinkgem.jeesite.modules.sys.utils.UserUtils;
 import com.thinkgem.jeesite.modules.yd.entity.YDConstant;
 import com.thinkgem.jeesite.modules.yd.service.IDayAttendanceService;
 import com.thinkgem.jeesite.modules.ydaudittemp.entity.YdAuditTemplate;
 import com.thinkgem.jeesite.modules.ydaudittemp.service.YdAuditTemplateService;
+import com.thinkgem.jeesite.modules.yuekaoqinall.service.YdYeukaoqinAllService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -52,6 +56,9 @@ public class YdOvertimeController extends BaseController {
 
 	@Autowired
 	private IDayAttendanceService attendanceService;
+
+	@Autowired
+	private YdYeukaoqinAllService ydYeukaoqinAllService;
 
 	@Autowired
 	private YdAuditTemplateService auditTemplateService;
@@ -288,6 +295,35 @@ public class YdOvertimeController extends BaseController {
 			addMessage(redirectAttributes, "已成功导入 "+successNum+" 条"+failureMsg);
 		} catch (Exception e) {
 			addMessage(redirectAttributes, "导入加班失败！失败信息："+e.getMessage());
+		}
+		return "redirect:" + adminPath + "/yd/ydOvertime/list?repage";
+	}
+
+
+	/**
+	 * 下载导入加班数据模板
+	 * @param response
+	 * @param redirectAttributes
+	 * @return
+	 * 工号	姓名	开始时间	结束时间	审核人姓名
+	 */
+	/*@RequiresPermissions("yd:overtime:import")*/
+	@RequestMapping(value = "import/template")
+	public String importFileTemplate(HttpServletResponse response, RedirectAttributes redirectAttributes) {
+		try {
+			String fileName = "加班导入模板.xlsx";
+			List<YdOvertime> list = Lists.newArrayList();
+			YdOvertime ydOvertime = new YdOvertime();
+			ydOvertime.setUserNo("0000000");
+			ydOvertime.setErpName("测试");
+			ydOvertime.setImportSTime("2017-9-24 8:00");
+			ydOvertime.setImportETime("2017-9-24 17:00");
+			ydOvertime.setAuditUserName("管理员");
+			list.add(ydOvertime);
+			new ExportExcel("", YdOvertime.class, 0).setDataList(list).write(response, fileName).dispose();
+			return null;
+		} catch (Exception e) {
+			addMessage(redirectAttributes, "导入模板下载失败！失败信息："+e.getMessage());
 		}
 		return "redirect:" + adminPath + "/yd/ydOvertime/list?repage";
 	}

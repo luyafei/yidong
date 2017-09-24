@@ -113,8 +113,8 @@ public class YdOvertimeService extends CrudService<YdOvertimeDao, YdOvertime> {
 		overtime.setAuditLevel(1);
 		overtime.setAuditUserName(ydAuditTemplate.getAuditUserName());
 		overtime.setAuditUserNo(ydAuditTemplate.getAuditUserLoginname());
-		overtime.setStartDate(DateUtils.parseDate(overtime.getImportSTime(), "yyyy/MM/dd HH:mm"));
-		overtime.setEndDate(DateUtils.parseDate(overtime.getImportETime(), "yyyy/MM/dd HH:mm"));
+		overtime.setStartDate(DateUtils.parseDate(overtime.getImportSTime(), "yyyy-MM-dd HH:mm"));
+		overtime.setEndDate(DateUtils.parseDate(overtime.getImportETime(), "yyyy-MM-dd HH:mm"));
 		overtime.setCreateDate(new Date());
 		overtime.setUpdateDate(new Date());
 		logger.info("completion overtime is {}", JSON.toJSONString(overtime));

@@ -8,6 +8,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import com.thinkgem.jeesite.modules.yd.entity.YDConstant;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,8 +42,6 @@ public class YdYeukaoqinAllService extends CrudService<YdYeukaoqinAllDao, YdYeuk
 
 	@Autowired
 	private UserDao userDao;
-	@Autowired
-	private IDayAttendanceService attendanceService;
 	
 	@Autowired
 	YdYeukaoqinAllDao ydYeukaoqinAllDao;
@@ -204,7 +204,47 @@ public class YdYeukaoqinAllService extends CrudService<YdYeukaoqinAllDao, YdYeuk
 		
 		return re;
 	}
-	
-	
-	
+
+
+	/**
+	 * lyf
+	 * 判断 月考勤是否存在 如果存在不操作，不存在新增一条
+	 * @param months 考勤时间 例如：201709
+	 * @param user 考勤人
+	 */
+	public void isinsertShenhe(String months ,User user){
+
+		YdYeukaoqinAll yda = new YdYeukaoqinAll();
+		yda.setAttMonth(months);
+		yda.setAreaId(user.getOffice().getArea().getId());
+		yda.setOfficeId(user.getOffice().getId());
+		yda.setOfficeName(user.getOffice().getName());
+		yda.setIngStatus(0);
+		yda.setAuditStatus("未提交");
+		String isshi = "false";
+		if("承德市".equals(user.getOffice().getArea().getName())){
+			isshi = "true";
+		}
+		yda.setIsshi(isshi);
+		yda.setCreateDate(new Date());
+		YdYeukaoqinAll reInfo = ydYeukaoqinAllDao.isinsertShenhe(months,user.getOffice().getId());
+		if(reInfo==null){
+			ydYeukaoqinAllDao.insertShenheInfo(yda);
+		}
+
+	}
+	/**
+	 * lyf
+	 * true 能变动 yuekaoqin false 审核中 或审核通过 都能操作yuekaoqin
+	 */
+	public Boolean isAudit(String months,String offiecId){
+		YdYeukaoqinAll reInfo = ydYeukaoqinAllDao.isinsertShenhe(months,offiecId);
+		if (reInfo != null && (YDConstant.YUEKAOQINSTATUS_AUDITING.equals(reInfo.getAuditStatus()) ||
+				YDConstant.YUEKAOQINSTATUS_AUDITED.equals(reInfo.getAuditStatus()))){
+			return false;
+		}
+		return true;
+	}
+
+
 }

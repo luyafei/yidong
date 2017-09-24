@@ -13,6 +13,7 @@ import com.thinkgem.jeesite.modules.yd.dao.PunchcardRecordDao;
 import com.thinkgem.jeesite.modules.yd.entity.PunchcardRecord;
 import com.thinkgem.jeesite.modules.yuekaoqin.dao.AttendanceDayDao;
 import com.thinkgem.jeesite.modules.yuekaoqin.entity.AttendanceDay;
+import com.thinkgem.jeesite.modules.yuekaoqinall.service.YdYeukaoqinAllService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,8 +56,8 @@ public class DayAttendanceServiceImpl implements IDayAttendanceService {
     @Autowired
     private LeaveDao leaveDao;
 
-
-
+    @Autowired
+    private YdYeukaoqinAllService yeukaoqinAllService;
 
 
     @Override
@@ -143,7 +144,6 @@ public class DayAttendanceServiceImpl implements IDayAttendanceService {
             Leave leave =leaveDao.getLeaveBydate(queryLeave);
             if (leave != null){
                 attendanceDay.setStatus(leave.getLeaveType());
-
             }else {
                 if (isWorkingDay(DateUtils.getDate())){
                     logger.info("工作{}考勤记录",DateUtils.getDate());
@@ -186,24 +186,26 @@ public class DayAttendanceServiceImpl implements IDayAttendanceService {
         //根据请假数据的 开始时间和结束时间查询出 修改
         List<Date> ldata = DateUtils.getDatesBetweenTwoDate(beginDate,endDate);
         for (Date d : ldata) {
-            AttendanceDay yuekaoqin = new AttendanceDay();
-            yuekaoqin.setDate(d);
-            yuekaoqin.setUid(user.getNo());
-            yuekaoqin.setMonth(DateUtils.formatDate(d, "yyyyMM"));
-            yuekaoqin.setAreaId(user.getOffice().getArea().getId());
-            yuekaoqin.setName(user.getName());
-            yuekaoqin.setDeptId(user.getOffice().getId());
-            yuekaoqin.setUpdateDate(new Date());
-            yuekaoqin.setCreateDate(new Date());
-            yuekaoqin.setStatus(attStatus);
-            yuekaoqin.setDuration((double) TimeUtils.getDiffHour(beginDate, endDate));
-            this.saveOrUpdate(yuekaoqin);
+            String month = DateUtils.formatDate(d, "yyyyMM");
+            yeukaoqinAllService.isinsertShenhe(month,user);
+            if (yeukaoqinAllService.isAudit(month,user.getOffice().getId())){
+                AttendanceDay yuekaoqin = new AttendanceDay();
+                yuekaoqin.setDate(d);
+                yuekaoqin.setUid(user.getNo());
+                yuekaoqin.setMonth(month);
+                yuekaoqin.setAreaId(user.getOffice().getArea().getId());
+                yuekaoqin.setName(user.getName());
+                yuekaoqin.setDeptId(user.getOffice().getId());
+                yuekaoqin.setUpdateDate(new Date());
+                yuekaoqin.setCreateDate(new Date());
+                yuekaoqin.setStatus(attStatus);
+                yuekaoqin.setDuration((double) TimeUtils.getDiffHour(beginDate, endDate));
+                this.saveOrUpdate(yuekaoqin);
+            }
         }
 
 
     }
-
-
 
     /**
      * true 是工作日

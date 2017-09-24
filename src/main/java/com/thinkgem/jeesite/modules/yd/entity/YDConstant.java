@@ -21,4 +21,9 @@ public class YDConstant {
 
     public final static String LEAVE_TYPE = "ydLeave_audit";//请假审核
 
+    //月考勤审核状态
+
+    public final  static String YUEKAOQINSTATUS_AUDITING = "2";//审核中
+    public final  static String YUEKAOQINSTATUS_AUDITED = "4";//审核中
+
 }
