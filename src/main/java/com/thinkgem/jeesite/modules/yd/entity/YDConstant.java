@@ -23,7 +23,7 @@ public class YDConstant {
 
     //月考勤审核状态
 
-    public final  static String YUEKAOQINSTATUS_AUDITING = "2";//审核中
-    public final  static String YUEKAOQINSTATUS_AUDITED = "4";//审核中
+    public final  static String YUEKAOQINSTATUS_AUDITING = "审核中";//审核中
+    public final  static String YUEKAOQINSTATUS_AUDITED = "通过";//审核中
 
 }
