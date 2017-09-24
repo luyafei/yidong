@@ -196,6 +196,7 @@ public class DayAttendanceServiceImpl implements IDayAttendanceService {
                 yuekaoqin.setAreaId(user.getOffice().getArea().getId());
                 yuekaoqin.setName(user.getName());
                 yuekaoqin.setDeptId(user.getOffice().getId());
+                yuekaoqin.setOfficeName(user.getOffice().getName());
                 yuekaoqin.setUpdateDate(new Date());
                 yuekaoqin.setCreateDate(new Date());
                 yuekaoqin.setStatus(attStatus);

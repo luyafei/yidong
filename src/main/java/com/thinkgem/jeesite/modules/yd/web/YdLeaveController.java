@@ -196,7 +196,7 @@ public class YdLeaveController extends BaseController {
 				} catch (ParseException e) {
 					logger.info("审核通过生成异常记录失败",e);
 					addMessage(model,"审核请假记录失败！");
-					return "redirect:"+Global.getAdminPath()+"/yd/ydOvertime/auditList?repage";
+					return "redirect:"+Global.getAdminPath()+"/yd/ydLeave/auditList?repage";
 				}
 			}else {//指定下级
 				ydLeave1.setAuditStatus("auditing");
@@ -216,7 +216,7 @@ public class YdLeaveController extends BaseController {
 			logger.info("考勤异常审核不通过：{}", JSON.toJSONString(ydLeave1));
 		}
 		ydLeaveService.save(ydLeave1);
-		return "redirect:"+Global.getAdminPath()+"/yd/ydOvertime/auditList?repage";
+		return "redirect:"+Global.getAdminPath()+"/yd/ydLeave/auditList?repage";
 	}
 	
 	//@RequiresPermissions("yd:ydLeave:edit")

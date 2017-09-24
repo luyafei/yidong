@@ -81,7 +81,7 @@
 					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm',isShowClear:false});"/>
 			</div>
 		</div>
-		${not empty templateList}
+	<%--	${not empty templateList}--%>
 
 				<div class="control-group">
 					<label class="control-label">审核人：</label>
