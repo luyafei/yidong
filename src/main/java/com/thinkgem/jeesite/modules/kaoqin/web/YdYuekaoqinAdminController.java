@@ -13,7 +13,7 @@ import com.thinkgem.jeesite.common.beanvalidator.BeanValidators;
 import com.thinkgem.jeesite.common.utils.DateUtils;
 import com.thinkgem.jeesite.common.utils.excel.ExportExcel;
 import com.thinkgem.jeesite.common.utils.excel.ImportExcel;
-import com.thinkgem.jeesite.modules.kaoqin.entity.ImportYdYuekaoqin2;
+import com.thinkgem.jeesite.modules.kaoqin.entity.ImportYdYuekaoqin;
 import com.thinkgem.jeesite.modules.sys.entity.User;
 import com.thinkgem.jeesite.modules.sys.service.SystemService;
 import com.thinkgem.jeesite.modules.sys.utils.DictUtils;
@@ -116,8 +116,8 @@ public class YdYuekaoqinAdminController extends BaseController {
 			int failureNum = 0;
 			StringBuilder failureMsg = new StringBuilder();
 			ImportExcel ei = new ImportExcel(file, 0, 0);
-			List<ImportYdYuekaoqin2> list = ei.getDataList(ImportYdYuekaoqin2.class);
-			for (ImportYdYuekaoqin2 importYdYuekaoqin : list){
+			List<ImportYdYuekaoqin> list = ei.getDataList(ImportYdYuekaoqin.class);
+			for (ImportYdYuekaoqin importYdYuekaoqin : list){
 				if ("".equals(importYdYuekaoqin.getUserNO()) || null == importYdYuekaoqin.getUserNO()){
 					logger.info("UserNO不能是空", JSON.toJSONString(importYdYuekaoqin));
 					continue;
