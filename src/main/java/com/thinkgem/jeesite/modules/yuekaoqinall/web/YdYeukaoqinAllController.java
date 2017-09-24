@@ -384,6 +384,25 @@ public class YdYeukaoqinAllController extends BaseController {
 			
 		}
 		
+		if(deptList.size()==0){
+			System.out.println("all表未查询到此月份数据，进行插入:"+ydYeukaoqinAll.getAttMonth());
+			ydYeukaoqinAll.setAuditStatus("未提交");
+			ydYeukaoqinAll.setCreateDate(new Date());
+			ydYeukaoqinAllDao.insertShenheInfo(ydYeukaoqinAll);
+			
+			page = ydYeukaoqinAllService.findPage(new Page<YdYeukaoqinAll>(request, response), ydYeukaoqinAll); 
+			List<YdYeukaoqinAll> deptList2 = page.getList();
+			for(int i=0;i<deptList2.size();i++){
+				String areaName = ydYeukaoqinAllDao.getAreaName(deptList2.get(i).getAreaId());
+				System.out.println("areaName:"+areaName);
+				deptList2.get(i).setAreaName(areaName);
+				String status_value = deptList2.get(i).getAuditStatus();
+				deptList2.get(i).setLable(status_value);
+			}
+			
+		}
+		
+		
 		if(pageNo!=null && !pageNo.equals("")) page.setPageNo(Integer.parseInt(pageNo));
 		if(pageSize!=null && !pageSize.equals("")) page.setPageSize(Integer.parseInt(pageSize));
 		

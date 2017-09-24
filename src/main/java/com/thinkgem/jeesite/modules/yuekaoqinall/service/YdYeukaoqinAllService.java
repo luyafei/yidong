@@ -114,7 +114,8 @@ public class YdYeukaoqinAllService extends CrudService<YdYeukaoqinAllDao, YdYeuk
 				attendanceDay.setName(yuekaoqin31.getName());
 				attendanceDay.setAreaId(area.getId());
 				attendanceDay.setMonth(months);
-				
+				System.out.println("getOffice:"+u2.getOffice().getName());
+				attendanceDay.setOfficeName(u2.getOffice().getName());
 				attendanceDay.setCreateDate(new Date());
 				attendanceDay.setUpdateDate(new Date());
 				
