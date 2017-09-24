@@ -202,6 +202,9 @@ public class UserController extends BaseController {
 			List<User> list = ei.getDataList(User.class);
 			for (User user : list){
 				try{
+					if(user.getCompany() == null || user.getOffice() == null){
+						throw new Exception("请检查公司或部门名称系统中是否存在");
+					}
 					Office of = officeService.findchildrenOffByParName(user.getCompany().getName(),user.getOffice().getName());
 					if (null == of){
 						throw new Exception(user.getCompany().getName() + " 公司下未找到对应部门 ");
