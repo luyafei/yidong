@@ -353,6 +353,9 @@ public class YdYuekaoqinController extends BaseController {
 			}
 			//获取状态对用的中文
 			String lable = DictUtils.getDictLabels(ykq.getStatus(), "AttendanceStatus", "unknow");
+			if(lable.equals("加班")){
+				lable += ykq.getDuration()==null?"":ykq.getDuration();
+			}
 			lmap.put(ykq.getRiqi(),lable);
 			statusMap.put(uid , lmap);
 			nameMap.put(uid,ykq.getName());
@@ -475,9 +478,13 @@ public class YdYuekaoqinController extends BaseController {
 			}else{
 				shuoming = month;
 			}
+			ydYuekaoqin.setMonth(ydYuekaoqin.getMonth().replaceAll("-", "") );
+		}else{
+			ydYuekaoqin.setMonth(new SimpleDateFormat("yyyy-MM").format(new Date()));
 		}
 		model.addAttribute("shuoming", shuoming);
 
+		
 		Page<AttendanceDay> page = ydYuekaoqinService.findPage(new Page<AttendanceDay>(request, response), ydYuekaoqin);
 
 
@@ -494,7 +501,10 @@ public class YdYuekaoqinController extends BaseController {
 				lmap = new HashMap<String, String>();
 			}
 			//获取状态对用的中文
-			String lable = DictUtils.getDictLabels(ykq.getStatus(), "AttendanceStatus", "hyw");
+			String lable = DictUtils.getDictLabels(ykq.getStatus(), "AttendanceStatus", "unknow");
+			if(lable.equals("加班")){
+				lable += ykq.getDuration()==null?"":ykq.getDuration();
+			}
 			lmap.put(ykq.getRiqi(),lable);
 			statusMap.put(uid , lmap);
 			nameMap.put(uid,ykq.getName());
@@ -512,6 +522,13 @@ public class YdYuekaoqinController extends BaseController {
 		model.addAttribute("statusMap", statusMap);
 		model.addAttribute("page", page);
 		model.addAttribute("deptname", ydYuekaoqin.getOfficeName());
+		
+		String yuefen = "";
+		
+		//当前选择的月份
+		model.addAttribute("month", ydYuekaoqin.getMonth().substring(0,4)+"-"+ydYuekaoqin.getMonth().substring(4,6));
+		
+		System.out.println("详情查看的月份:"+ydYuekaoqin.getMonth());
 		
 //		model.addAttribute("message", "");
 

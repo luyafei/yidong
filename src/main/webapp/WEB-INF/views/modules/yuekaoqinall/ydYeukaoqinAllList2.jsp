@@ -37,6 +37,13 @@
 		
 		
 		function tijiaoshenhes(shenheid){
+			if(window.confirm('提交本月考勤审核后，将不能再次导入本月考勤')){
+				$("#shenheid").val(shenheid);
+				$("#tijiaoshenhe").val("true");
+				$("#searchForm").submit();
+			}
+		}
+		function tijiaoshenhes_xx(shenheid){
 			$("#shenheid").val(shenheid);
 			$("#tijiaoshenhe").val("true");
 			$("#searchForm").submit();
@@ -94,7 +101,9 @@
 		
 			<c:if test="${isshi=='false'}">
 				<li><label>部门名称：</label>
-					<form:input path="officeName" htmlEscape="false" maxlength="255" class="input-medium"/>
+					<%-- <form:input path="officeName" htmlEscape="false" maxlength="255" class="input-medium"/> --%>
+					<sys:treeselect id="office" name="deptId" value="${testData.office.id}" labelName="office.name" labelValue="${testData.office.name}"
+					title="部门" url="/sys/office/treeData?type=2" cssClass="" allowClear="true" notAllowSelectParent="true"/>
 				</li>
 			</c:if>
 			
@@ -189,7 +198,7 @@
 						<input disabled="disabled" id="yitijiao" class="btn btn-primary" type="button" value="已提交"/>
 					</c:if>
 					-->
-						<a href="${ctx}/yuekaoqin/attendanceDay/renziyuekaoqin?month=${ydYeukaoqinAll.attMonth}&deptId=${ydYeukaoqinAll.officeId}"><input onclick="tijiaoshenhes(${ydYeukaoqinAll.id})" id="xiangxi" class="btn btn-primary" type="button" value="详细"/></a>
+						<a href="${ctx}/yuekaoqin/attendanceDay/renziyuekaoqin?month=${ydYeukaoqinAll.attMonth}&deptId=${ydYeukaoqinAll.officeId}"><input onclick="tijiaoshenhes_xx(${ydYeukaoqinAll.id})" id="xiangxi" class="btn btn-primary" type="button" value="详细"/></a>
 				
 					
 				</td>

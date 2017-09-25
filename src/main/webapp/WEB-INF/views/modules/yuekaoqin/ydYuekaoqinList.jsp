@@ -35,10 +35,16 @@
 		<ul class="ul-form">
 		
 			<c:if test="${shenfen=='renzikaoqinshenhe' || shenfen=='renzikaoqin' }">
-				<li ><label>部门：</label>
-					<form:input  path="officeName" htmlEscape="false" maxlength="255" class="input-medium" value="${deptname}" />
+				<li >
+					<%-- <label>部门：</label>
+					<form:input  path="officeName" htmlEscape="false" maxlength="255" class="input-medium" value="${deptname}" /> --%>
+					<label class="control-label">部门名称：</label>
+					<sys:treeselect id="office" name="deptId" value="${testData.office.id}" labelName="office.name" labelValue="${testData.office.name}"
+					title="部门" url="/sys/office/treeData?type=2" cssClass="" allowClear="true" notAllowSelectParent="true"/>
 				</li>
 			</c:if>
+			
+			
 			<c:if test="${shenfen!='renzikaoqinshenhe' && shenfen!='renzikaoqin' }">
 				<li >
 					<form:input  path="officeName" type="hidden"  htmlEscape="false" maxlength="255" class="input-medium" value="${deptname}" />

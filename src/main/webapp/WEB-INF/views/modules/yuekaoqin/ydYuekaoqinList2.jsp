@@ -56,7 +56,8 @@
 				<form:input path="uid" htmlEscape="false" maxlength="255" class="input-medium"/>
 			</li>
 			<li style="width:500px"><label>月份：</label>
-				<form:input path="month" htmlEscape="false" maxlength="255" class="input-medium"/>（例：201601）
+				<form:input path="month" type="month" htmlEscape="false" maxlength="255" class="input-medium" value="${month}"  />（例：201601）
+				
 			</li>
 			<li class="btns"></li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/><input onclick="back()" id="btnBack" class="btn btn-primary" type="button"  value="返回"/></li>
