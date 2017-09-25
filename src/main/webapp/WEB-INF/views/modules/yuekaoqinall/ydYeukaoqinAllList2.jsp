@@ -100,7 +100,7 @@
 		
 		
 			<c:if test="${isshi=='false'}">
-				<li><label>部门名称1：</label>
+				<li><label>部门名称：</label>
 					<%-- <form:input path="officeName" htmlEscape="false" maxlength="255" class="input-medium"/> --%>
 					<sys:treeselect id="office" name="deptId" value="${testData.office.id}" labelName="office.name" labelValue="${testData.office.name}"
 					title="部门" url="/sys/office/treeData?type=2&renzikaoqin=1" cssClass="" allowClear="true" notAllowSelectParent="true"/>

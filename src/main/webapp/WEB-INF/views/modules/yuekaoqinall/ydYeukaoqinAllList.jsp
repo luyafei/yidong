@@ -113,7 +113,7 @@
 			</c:if> --%>
 			
 			<li >
-				<label class="control-label">部门名称2：</label>
+				<label class="control-label">部门名称：</label>
 				<sys:treeselect id="office" name="officeId" value="" labelName="office.name" labelValue=""
 					title="部门" url="/sys/office/treeData?type=2&renzikaoqin=1" cssClass="" allowClear="true" notAllowSelectParent="true"/>
 			</li>
