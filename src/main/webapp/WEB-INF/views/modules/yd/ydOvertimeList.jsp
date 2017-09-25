@@ -52,7 +52,9 @@
 			</li>
 
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
-			<li class="btns"><input id="btnImport" class="btn btn-primary" type="button" value="导入"/></li>
+			<shiro:hasPermission name="yd:overtime:import">
+				<li class="btns"><input id="btnImport" class="btn btn-primary" type="button" value="导入"/></li>
+			</shiro:hasPermission>
 			<li class="clearfix"></li>
 		</ul>
 	</form:form>

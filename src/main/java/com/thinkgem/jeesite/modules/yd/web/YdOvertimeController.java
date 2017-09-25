@@ -14,6 +14,7 @@ import com.thinkgem.jeesite.common.utils.DateUtils;
 import com.thinkgem.jeesite.common.utils.excel.ExportExcel;
 import com.thinkgem.jeesite.common.utils.excel.ImportExcel;
 import com.thinkgem.jeesite.modules.kaoqin.entity.YdYuekaoqinAdmin;
+import com.thinkgem.jeesite.modules.sys.entity.Role;
 import com.thinkgem.jeesite.modules.sys.entity.User;
 import com.thinkgem.jeesite.modules.sys.utils.UserUtils;
 import com.thinkgem.jeesite.modules.yd.entity.YDConstant;
@@ -66,6 +67,8 @@ public class YdOvertimeController extends BaseController {
 
 	private String auditType = YDConstant.OVER_TIME_TYPE;
 
+	private final static String bumenkaoqin = "bumenkaoqin";
+
 	
 	@ModelAttribute
 	public YdOvertime get(@RequestParam(required=false) String id) {
@@ -84,6 +87,13 @@ public class YdOvertimeController extends BaseController {
 	public String list(YdOvertime ydOvertime, HttpServletRequest request, HttpServletResponse response, Model model) {
 		User user = UserUtils.getUser();
 		ydOvertime.setErpNo(user.getLoginName());
+		List<Role> roles = user.getRoleList();
+		for (Role r : roles){
+			if (bumenkaoqin.equals(r.getEnname())){
+				ydOvertime.setOfficeId(user.getOffice().getId());
+				ydOvertime.setErpNo(null);
+			}
+		}
 		Page<YdOvertime> page = ydOvertimeService.findPage(new Page<YdOvertime>(request, response), ydOvertime); 
 		model.addAttribute("page", page);
 		return "modules/yd/ydOvertimeList";
@@ -268,7 +278,7 @@ public class YdOvertimeController extends BaseController {
 	 * @param redirectAttributes
 	 * @return
 	 */
-	/*@RequiresPermissions("yd:overtime:import")*/
+	@RequiresPermissions("yd:overtime:import")
 	@RequestMapping(value = "import", method= RequestMethod.POST)
 	public String importFile(MultipartFile file, RedirectAttributes redirectAttributes) {
 		try {
