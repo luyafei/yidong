@@ -96,12 +96,21 @@ public class YdYeukaoqinAllController extends BaseController {
 		return entity;
 	}
 	
+	@Autowired
+	private OfficeDao officeDao;
 	
 	//审核人员专用
 //	@RequiresPermissions("oa:leave:view") //权限控制
 	@RequestMapping(value = {"list", ""})
 	public String list(YdYeukaoqinAll ydYeukaoqinAll, HttpServletRequest request, HttpServletResponse response, Model model, String pageNo ,  String pageSize , String shenhetongguo,String shenhebutongguo,String shenheid) {
 //		ydYeukaoqinAll.seta
+		System.out.println("-------月考勤审核总览------");
+		if(ydYeukaoqinAll!=null && ydYeukaoqinAll.getOfficeId()!=null && !ydYeukaoqinAll.getOfficeId().equals("")){
+			System.out.println("搜索部门ID："+ydYeukaoqinAll.getOfficeId());
+			Office office = officeDao.getOffById(ydYeukaoqinAll.getOfficeId());
+			System.out.println("搜索部门名称："+office.getName());
+			ydYeukaoqinAll.setOfficeName(office.getName());
+		}
 		
 		if(shenhetongguo!=null && shenhetongguo.equals("true")){
 			
@@ -250,6 +259,8 @@ public class YdYeukaoqinAllController extends BaseController {
 		//当前选择的月份
 		model.addAttribute("yuefen", yuefen);
 		
+		model.addAttribute("officeId", ydYeukaoqinAll.getOfficeId());
+		model.addAttribute("officeName", ydYeukaoqinAll.getOfficeName());
 		
 		return "modules/yuekaoqinall/ydYeukaoqinAllList";
 	}

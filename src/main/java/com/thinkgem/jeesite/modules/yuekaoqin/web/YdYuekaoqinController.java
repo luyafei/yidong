@@ -146,123 +146,6 @@ public class YdYuekaoqinController extends BaseController {
 	@RequestMapping(value = {"list", ""})
 	public String list(AttendanceDay attendanceDay, HttpServletRequest request, HttpServletResponse response, Model model , String pageNo ,  String pageSize ) {
 		
-//		User user = UserUtils.getUser();
-//		System.out.println(user.getOffice().getArea());
-//		Area area = user.getOffice().getArea();
-//		String shiname = area.getName();
-//		System.out.println("用户所属地区:"+shiname);
-//		String isshi = "false";
-//		if(shiname.equals("承德市")){
-//			isshi = "true";
-//		}
-//		
-//		Role role = ydYeukaoqinAllDao.getRoleByUId(user.getId());
-//		System.out.println(role);
-//		String shenfen = "";
-//		if(role.getName()!=null && role.getName().equals("人资考勤审核员") ){
-//			System.out.println("人资考勤审核员,看所有地区,所有部门");
-////			ydYeukaoqinAll.setIngStatus(3);
-//			shenfen = "renzikaoqinshenhe";
-//			
-//		}else if( role.getName()!=null && role.getName().equals("人资考勤")){
-//			System.out.println("人资考勤,看所有地区,所有部门");
-////			ydYeukaoqinAll.setIngStatus(3);
-//			shenfen = "renzikaoqin";
-//		}else if(role.getName()!=null && role.getName().equals("县经理")){
-//			System.out.println("县经理,只看:2,false");
-//			shenfen = "xianjingli";
-//		}else if(role.getName()!=null && role.getName().equals("部门经理")){
-//			System.out.println("部门经理,只看:1");
-//			shenfen = "bumenjingli";
-//		}
-//		attendanceDay.setShenfen(shenfen);
-//		
-//		
-//		//人资考勤:看所有地区,所有部门
-//		
-//		//市部门经理: 看本部门
-//		
-//		//县部门经理: 看本地区 , 所有部门
-//		
-//		//县经理 : 看本地区 , 所有部门
-//		
-//		
-//		
-//		
-//		System.out.println("审核人员月考勤详情页跳转");
-//		
-////		if(deptId==null ){
-////			deptId = "";
-////		},String deptId
-////		model.addAttribute("deptId", deptId);
-//		
-////		try{
-////			String roleName = ydYuekaoqinDao.getRoleNameByUid(user.getId());
-////			if(roleName.equals("考勤员")){
-////				System.out.println("只能看本部门考勤.");
-////				attendanceDay.setDeptId(user.getOffice().getId());
-////			}else{
-////				System.out.println("只能看本人考勤.");
-////				attendanceDay.setUid(user.getNo());
-////			}
-////		}catch(Exception e){
-////			e.printStackTrace();
-////		}
-//		String shuoming = new SimpleDateFormat("yyyy年MM").format(new Date())+"月考勤数据：";
-//		String month = attendanceDay.getMonth();
-//		if(month!=null && !month.equals("")){
-//			if(month.length()==6 && month.matches("\\d{6}")){
-//				shuoming = month.substring(0,4)+"年"+month.substring(4)+"月考勤数据：";
-//			}else{
-//				shuoming = month;
-//			}
-//		}
-//		model.addAttribute("shuoming", shuoming);
-//		Page<AttendanceDay> page = ydYuekaoqinService.findPage(new Page<AttendanceDay>(request, response), attendanceDay);
-//		
-//		List<Yuekaoqin31> ykq31List = new ArrayList<Yuekaoqin31>();
-//		
-//		List<AttendanceDay> pageList = page.getList();
-//		for(AttendanceDay ykq : pageList ){
-//			String uid = ykq.getUid();
-//			String thisriqi = new SimpleDateFormat("dd").format(ykq.getDate());
-//			//获取状态对用的中文
-//			String lable = DictUtils.getDictLabels(ykq.getStatus(), "AttendanceStatus", "hyw");
-//			int isykq = -1;
-//			for( Yuekaoqin31 ykq31 : ykq31List){
-//				//存在实体
-//				if(ykq31.getUid().equals(uid)) {
-//					isykq=0;
-//					setRiqiStatus(ykq31,thisriqi,lable);
-//				}
-//			}
-//			//没有此UID对应的实体
-//			if(isykq==-1){
-//				Yuekaoqin31 ykq31 = new Yuekaoqin31();
-//				ykq31.setUid(ykq.getUid());
-//				ykq31.setName(ykq.getName());
-//				ykq31.setDeptId(ykq.getDeptId());
-//				ykq31.setOfficeName(ykq.getOfficeName());
-//				
-//				setRiqiStatus(ykq31,thisriqi,lable);
-//				ykq31List.add(ykq31);
-//			}
-//			
-//		}
-//		
-//		page.setCount(ykq31List.size());
-//		if(pageNo!=null && !pageNo.equals("")) page.setPageNo(Integer.parseInt(pageNo));
-//		if(pageSize!=null && !pageSize.equals("")) page.setPageSize(Integer.parseInt(pageSize));
-//		
-//		page.setOrderBy("uid asc");
-//		
-//		model.addAttribute("ykq31List", ykq31List);
-//		model.addAttribute("page", page);
-//		System.out.println("ykq31List:"+ykq31List.size());
-		
-//		model.addAttribute("message", "");
-		
-		
 		
 		System.out.println("审核人员月考勤详情页action");
 		User user = UserUtils.getUser();
@@ -297,25 +180,27 @@ public class YdYuekaoqinController extends BaseController {
 		model.addAttribute("shenfen", shenfen);
 		
 		
+		System.out.println("访问用户的部门id："+attendanceDay.getDeptId());
 		
-		System.out.println(attendanceDay.getName());
-		System.out.println(attendanceDay.getOfficeName());
-		
-		if(attendanceDay!=null && attendanceDay.getDeptId()!=null){
+		if(attendanceDay!=null && attendanceDay.getDeptId()!=null && !attendanceDay.getDeptId().equals("")){
 			Office office = officeDao.getOffById(attendanceDay.getDeptId());
 			attendanceDay.setOfficeName(office.getName());
+//			model.addAttribute("testData", office);
 		}else{
-			if(attendanceDay!=null && attendanceDay.getOfficeName()!=null && !attendanceDay.getOfficeName().equals("")){
-				try{
-					Office office = officeDao.getOffByName(attendanceDay.getOfficeName());
-					System.out.println("office.getId():"+office.getId());
-					
-					attendanceDay.setDeptId(office.getId());
-				}catch(Exception e){
-					
-					attendanceDay.setDeptId("-1");
-				}
-			}
+			System.out.println("注意！！ 部门id为空...");
+//			if(attendanceDay!=null && attendanceDay.getOfficeName()!=null && !attendanceDay.getOfficeName().equals("")){
+//				try{
+//					Office office = officeDao.getOffByName(attendanceDay.getOfficeName());
+//					System.out.println("office.getId():"+office.getId());
+//					
+//					attendanceDay.setDeptId(office.getId());
+//				}catch(Exception e){
+//					
+//					attendanceDay.setDeptId("-1");
+//				}
+//			}
+			
+			
 		}
 		
 		System.out.println("ydYuekaoqin.getDeptId():"+attendanceDay.getDeptId());
@@ -324,13 +209,18 @@ public class YdYuekaoqinController extends BaseController {
 
 		String shuoming = new SimpleDateFormat("yyyy年MM").format(new Date())+"月考勤数据：";
 		String month = attendanceDay.getMonth();
+		System.out.println("查询月份信息："+month);
 		if(month!=null && !month.equals("")){
 			if(month.length()==6 && month.matches("\\d{6}")){
 				shuoming = month.substring(0,4)+"年"+month.substring(4)+"月考勤数据：";
 			}else{
 				shuoming = month;
 			}
+			if(month.contains("-"))month = month.replaceAll("-", "");
+		}else{
+			month = new SimpleDateFormat("yyyy-MM").format(new Date());
 		}
+		attendanceDay.setMonth(month);
 		model.addAttribute("shuoming", shuoming);
 
 //		System.out.println("开始查询"+shenfen);
@@ -373,6 +263,10 @@ public class YdYuekaoqinController extends BaseController {
 		model.addAttribute("statusMap", statusMap);
 		model.addAttribute("page", page);
 		model.addAttribute("deptname", attendanceDay.getOfficeName());
+		
+		if(!month.contains("-"))month = month.substring(0,4)+"-"+month.substring(4,6);
+		model.addAttribute("month", month);
+		
 		
 //		model.addAttribute("message", "");
 
@@ -453,17 +347,18 @@ public class YdYuekaoqinController extends BaseController {
 			Office office = officeDao.getOffById(ydYuekaoqin.getDeptId());
 			ydYuekaoqin.setOfficeName(office.getName());
 		}else{
-			if(ydYuekaoqin!=null && ydYuekaoqin.getOfficeName()!=null && !ydYuekaoqin.getOfficeName().equals("")){
-				try{
-					Office office = officeDao.getOffByName(ydYuekaoqin.getOfficeName());
-					System.out.println("office.getId():"+office.getId());
-					
-					ydYuekaoqin.setDeptId(office.getId());
-				}catch(Exception e){
-					
-					ydYuekaoqin.setDeptId("-1");
-				}
-			}
+			System.out.println("注意！！ 部门id为空...");
+//			if(ydYuekaoqin!=null && ydYuekaoqin.getOfficeName()!=null && !ydYuekaoqin.getOfficeName().equals("")){
+//				try{
+//					Office office = officeDao.getOffByName(ydYuekaoqin.getOfficeName());
+//					System.out.println("office.getId():"+office.getId());
+//					
+//					ydYuekaoqin.setDeptId(office.getId());
+//				}catch(Exception e){
+//					
+//					ydYuekaoqin.setDeptId("-1");
+//				}
+//			}
 		}
 		
 		System.out.println("ydYuekaoqin.getDeptId():"+ydYuekaoqin.getDeptId());

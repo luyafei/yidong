@@ -43,11 +43,12 @@
 			
 			<c:if test="${isshi!='false'}">
 				<li style="display:none"><label>部门：</label>
-					<form:input  path="officeName" htmlEscape="false" maxlength="255" class="input-medium" value="${deptname}" />
+					<sys:treeselect id="office" name="officeId" value="" labelName="office.name" labelValue=""
+					title="部门" url="/sys/office/treeData?type=2&renzikaoqin=1" cssClass="" allowClear="true" notAllowSelectParent="true"/>
 				</li>
 			</c:if>
 			
-			<shiro:hasPermission name="oa:leave:edit">123</shiro:hasPermission>
+			<%-- <shiro:hasPermission name="oa:leave:edit">123</shiro:hasPermission> --%>
 				
 			<li><label>姓名：</label>
 				<form:input path="name" htmlEscape="false" maxlength="255" class="input-medium"/>
@@ -83,7 +84,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<th style="text-align: center">工号123</th>
+				<th style="text-align: center">工号</th>
 				<th style="text-align: center">姓名</th>
 				<th style="text-align: center">1</th>
 				<th style="text-align: center">2</th>

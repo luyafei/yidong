@@ -39,8 +39,9 @@
 					<%-- <label>部门：</label>
 					<form:input  path="officeName" htmlEscape="false" maxlength="255" class="input-medium" value="${deptname}" /> --%>
 					<label class="control-label">部门名称：</label>
-					<sys:treeselect id="office" name="deptId" value="${testData.office.id}" labelName="office.name" labelValue="${testData.office.name}"
-					title="部门" url="/sys/office/treeData?type=2" cssClass="" allowClear="true" notAllowSelectParent="true"/>
+					<sys:treeselect id="office" name="deptId" value="${deptId}" labelName="office.name" labelValue="${deptname}"
+					title="部门" url="/sys/office/treeData?type=2&renzikaoqin=1" cssClass="" allowClear="true" notAllowSelectParent="true"/>
+					
 				</li>
 			</c:if>
 			
@@ -59,7 +60,7 @@
 			</li>
 			
 			<li style="width:500px"><label>月份：</label>
-				<form:input path="month" htmlEscape="false" maxlength="255" class="input-medium"/>（例：201601）
+				<form:input path="month" type="month" value="${month}" htmlEscape="false" maxlength="255" class="input-medium"/>（例：201601）
 			</li>
 			
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/><input onclick="back()" id="btnBack" class="btn btn-primary" type="button"  value="返回"/></li>
