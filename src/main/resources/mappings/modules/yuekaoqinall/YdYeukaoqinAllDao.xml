@@ -209,12 +209,14 @@
 		FROM yd_yeukaoqin_all a
 		<include refid="ydYeukaoqinAllJoins"/>
 		<where>
-			<if test="attMonth != null and attMonth != ''">
-				AND a.att_month = #{attMonth}
-			</if>
-			<if test="office_id != null and office_id != ''">
-				AND a.office_id = #{office_id}
-			</if>
+			<trim prefix="where" prefixOverrides="AND|OR">
+				<if test="attMonth != null and attMonth != ''">
+					AND a.att_month = #{attMonth}
+				</if>
+				<if test="officeId != null and officeId != ''">
+					AND a.office_id = #{officeId}
+				</if>
+			</trim>
 		</where>		
 	</select>
 	
