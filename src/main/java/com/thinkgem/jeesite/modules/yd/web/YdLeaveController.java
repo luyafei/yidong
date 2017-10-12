@@ -226,7 +226,7 @@ public class YdLeaveController extends BaseController {
 			logger.info("考勤异常审核不通过：{}", JSON.toJSONString(ydLeave1));
 		}
 		ydLeaveService.save(ydLeave1);
-		return "redirect:"+Global.getAdminPath()+"/yd/ydLeave/auditList?repage";
+		return "redirect:"+Global.getAdminPath()+"/yd/ydLeave/auditlist?repage";
 	}
 	
 	//@RequiresPermissions("yd:ydLeave:edit")

@@ -207,17 +207,16 @@
 		SELECT 
 			<include refid="ydYeukaoqinAllColumns"/>
 		FROM yd_yeukaoqin_all a
-		<include refid="ydYeukaoqinAllJoins"/>
-		<where>
+
 			<trim prefix="where" prefixOverrides="AND|OR">
 				<if test="attMonth != null and attMonth != ''">
-					AND a.att_month = #{attMonth}
+					AND att_month = #{attMonth}
 				</if>
 				<if test="officeId != null and officeId != ''">
-					AND a.office_id = #{officeId}
+					AND office_id = #{officeId}
 				</if>
 			</trim>
-		</where>		
+
 	</select>
 	
 	<select id="isUserInfo" resultType="AttendanceDay">

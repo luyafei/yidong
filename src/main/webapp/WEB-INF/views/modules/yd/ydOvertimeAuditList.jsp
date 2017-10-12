@@ -19,9 +19,10 @@
 <!-- 加班审核页面 -->
 <body>
 	<ul class="nav nav-tabs">
+		<li  class="active"><a href="${ctx}/yd/ydOvertime/auditList">待审列表</a></li>
 		<li ><a href="${ctx}/yd/ydOvertime/list">申请加班列表</a></li>
 		<li ><a href="${ctx}/yd/ydOvertime/form/">申请加班</a></li>
-		<li  class="active"><a href="${ctx}/yd/ydOvertime/auditList">待审列表</a></li>
+
 		<%--<shiro:hasPermission name="yd:ydOvertime:edit"><li><a href="${ctx}/yd/ydOvertime/form">申请加班添加</a></li></shiro:hasPermission>--%>
 	</ul>
 	<form:form id="searchForm" modelAttribute="ydOvertime" action="${ctx}/yd/ydOvertime/auditList" method="post" class="breadcrumb form-search">

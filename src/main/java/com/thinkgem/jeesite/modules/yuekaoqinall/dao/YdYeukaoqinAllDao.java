@@ -25,7 +25,7 @@ public interface YdYeukaoqinAllDao extends CrudDao<YdYeukaoqinAll> {
 	
 	public void insertShenheInfo(YdYeukaoqinAll yda );
 	
-	public YdYeukaoqinAll isinsertShenhe(@Param("attMonth") String attMonth , @Param("office_id") String office_id );
+	public YdYeukaoqinAll isinsertShenhe(@Param("attMonth") String attMonth , @Param("officeId") String office_id );
 	
 	public AttendanceDay isUserInfo(@Param("uid") String uid , @Param("date") Date date );
 	

@@ -28,9 +28,10 @@
 <!-- 加班申请页 -->
 <body>
 	<ul class="nav nav-tabs">
+		<li ><a href="${ctx}/yd/ydOvertime/auditList">待审列表</a></li>
 		<li ><a href="${ctx}/yd/ydOvertime/list">申请加班列表</a></li>
 		<li class="active"><a href="${ctx}/yd/ydOvertime/form/">申请加班</a></li>
-		<li ><a href="${ctx}/yd/ydOvertime/auditList">待审列表</a></li>
+
 		<%--<li><a href="${ctx}/yd/ydOvertime/">申请加班列表</a></li>
 		<li class="active"><a href="${ctx}/yd/ydOvertime/form?id=${ydOvertime.id}">申请加班<shiro:hasPermission name="yd:ydOvertime:edit">${not empty ydOvertime.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="yd:ydOvertime:edit">查看</shiro:lacksPermission></a></li>--%>
 	</ul><br/>

@@ -20,10 +20,10 @@
 	<ul class="nav nav-tabs">
 		<%--<li class="active"><a href="${ctx}/yd/ydLeave/">异常申请列表</a></li>
 		<shiro:hasPermission name="yd:ydLeave:edit"><li><a href="${ctx}/yd/ydLeave/form">异常申请添加</a></li></shiro:hasPermission>--%>
-
+		<li class="active"><a href="${ctx}/yd/ydLeave/auditlist">待审核列表</a></li>
 		<li><a href="${ctx}/yd/ydLeave/list">申请列表</a></li>
 		<li><a href="${ctx}/yd/ydLeave/form">申请异常</a></li>
-		<li class="active"><a href="${ctx}/yd/ydLeave/auditlist">待审核列表</a></li>
+
 	</ul>
 	<form:form id="searchForm" modelAttribute="ydLeave" action="${ctx}/yd/ydLeave/auditlist" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>

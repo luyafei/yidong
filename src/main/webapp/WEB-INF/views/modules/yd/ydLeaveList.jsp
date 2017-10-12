@@ -18,9 +18,10 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-	    <li class="active"><a href="${ctx}/yd/ydLeave/auditlist">待审核列表</a></li>
-		<li ><a href="${ctx}/yd/ydLeave/list">申请列表</a></li>
+		<li ><a href="${ctx}/yd/ydLeave/auditlist">待审核列表</a></li>
+		<li class="active"><a href="${ctx}/yd/ydLeave/list">申请列表</a></li>
 		<li><a href="${ctx}/yd/ydLeave/form">申请异常</a></li>
+
 
 		<%--<shiro:hasPermission name="yd:ydLeave:edit"><li><a href="${ctx}/yd/ydLeave/form">异常申请添加</a></li></shiro:hasPermission>
 		<shiro:hasPermission name="yd:ydLeave:edit"><li><a href="${ctx}/yd/ydLeave/form">审核异常考勤</a></li></shiro:hasPermission>--%>

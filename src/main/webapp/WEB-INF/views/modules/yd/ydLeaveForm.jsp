@@ -28,10 +28,10 @@
 <body>
 	<ul class="nav nav-tabs">
 		<%--<li class="active"><a href="${ctx}/yd/ydLeave/form?id=${ydLeave.id}">异常申请<shiro:hasPermission name="yd:ydLeave:edit">${not empty ydLeave.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="yd:ydLeave:edit">查看</shiro:lacksPermission></a></li>--%>
-
+		<li><a href="${ctx}/yd/ydLeave/auditlist">待审核列表</a></li>
 		<li><a href="${ctx}/yd/ydLeave/list">申请列表</a></li>
 		<li class="active"><a href="${ctx}/yd/ydLeave/auditlist">申请异常</a></li>
-		<li><a href="${ctx}/yd/ydLeave/auditlist">待审核列表</a></li>
+
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="ydLeave" action="${ctx}/yd/ydLeave/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>

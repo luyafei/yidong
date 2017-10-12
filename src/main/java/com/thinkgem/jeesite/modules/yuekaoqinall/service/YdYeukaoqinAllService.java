@@ -213,6 +213,7 @@ public class YdYeukaoqinAllService extends CrudService<YdYeukaoqinAllDao, YdYeuk
 	 * @param months 考勤时间 例如：201709
 	 * @param user 考勤人
 	 */
+	@Transactional(readOnly = false)
 	public void isinsertShenhe(String months ,User user){
 
 		YdYeukaoqinAll yda = new YdYeukaoqinAll();
@@ -228,6 +229,7 @@ public class YdYeukaoqinAllService extends CrudService<YdYeukaoqinAllDao, YdYeuk
 		}
 		yda.setIsshi(isshi);
 		yda.setCreateDate(new Date());
+		yda.setUpdateDate(new Date());
 		YdYeukaoqinAll reInfo = ydYeukaoqinAllDao.isinsertShenhe(months,user.getOffice().getId());
 		if(reInfo==null){
 			ydYeukaoqinAllDao.insertShenheInfo(yda);
