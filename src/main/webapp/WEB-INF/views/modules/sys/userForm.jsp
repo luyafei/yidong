@@ -30,6 +30,19 @@
 				}
 			});
 		});
+		
+		
+		
+		
+		function hyw(box){
+			console.log('点击box');
+			$('input').removeAttr('checked');
+			$(box).attr('checked','checked');
+			
+		}
+		
+		
+		
 	</script>
 </head>
 <body>
@@ -135,9 +148,9 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">用户角色:</label>
+			<label class="control-label">用户角色1:</label>
 			<div class="controls">
-				<form:checkboxes path="roleIdList" items="${allRoles}" itemLabel="name" itemValue="id" htmlEscape="false" class="required"/>
+				<form:checkboxes path="roleIdList" onclick='hyw(this)' items="${allRoles}" itemLabel="name" itemValue="id" htmlEscape="false" class="required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
