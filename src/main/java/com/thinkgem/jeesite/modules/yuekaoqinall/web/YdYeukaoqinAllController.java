@@ -335,7 +335,7 @@ public class YdYeukaoqinAllController extends BaseController {
 	//TODO 部门考勤 页面初始化位置
 	@RequestMapping(value = "deptkaoqin")
 	public String deptkaoqin(YdYeukaoqinAll ydYeukaoqinAll, HttpServletRequest request, HttpServletResponse response, Model model, String pageNo ,  String pageSize , String tijiaoshenhe , String shenheid) {
-		
+		System.out.println("=========================deptkaoqin=============================");
 		System.out.println("tijiaoshenhe:"+tijiaoshenhe);
 		if(tijiaoshenhe!=null && tijiaoshenhe.equals("true")){
 			YdYeukaoqinAll yda = ydYeukaoqinAllDao.getYuekaoqinAllByid(shenheid);
@@ -395,8 +395,17 @@ public class YdYeukaoqinAllController extends BaseController {
 			
 		}
 		
-		if(deptList.size()==0 && ydYeukaoqinAll.getAuditStatus()!=null 
-				&& (ydYeukaoqinAll.getAuditStatus().equals("全部") || ydYeukaoqinAll.getAuditStatus().equals("") )  ){
+		System.out.println("deptList.size:"+deptList.size());
+		System.out.println("ydYeukaoqinAll.getAuditStatus():"+ydYeukaoqinAll.getAuditStatus());
+		
+		//
+		if( (deptList.size()==0 && (ydYeukaoqinAll.getAuditStatus()==null ||ydYeukaoqinAll.getAuditStatus().equals("全部")||ydYeukaoqinAll.getAuditStatus().equals("")  )  ) 
+				||
+				( 
+				deptList.size()==0 && ydYeukaoqinAll.getAuditStatus()!=null && 
+				ydYeukaoqinAll.getAuditStatus().equals("全部") 
+				)
+				){
 			System.out.println("all表未查询到此月份数据，进行插入:"+ydYeukaoqinAll.getAttMonth());
 			ydYeukaoqinAll.setAuditStatus("未提交");
 			ydYeukaoqinAll.setCreateDate(new Date());
