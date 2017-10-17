@@ -147,7 +147,7 @@ public class YdYuekaoqinController extends BaseController {
 	public String list(AttendanceDay attendanceDay, HttpServletRequest request, HttpServletResponse response, Model model , String pageNo ,  String pageSize ) {
 		
 		
-		System.out.println("审核人员月考勤详情页action");
+		System.out.println("=========审核人员月考勤详情页action=========");
 		User user = UserUtils.getUser();
 		System.out.println(user.getOffice().getArea());
 		Area area = user.getOffice().getArea();
@@ -263,6 +263,7 @@ public class YdYuekaoqinController extends BaseController {
 		model.addAttribute("statusMap", statusMap);
 		model.addAttribute("page", page);
 		model.addAttribute("deptname", attendanceDay.getOfficeName());
+		model.addAttribute("deptId", attendanceDay.getDeptId());
 		
 		if(!month.contains("-"))month = month.substring(0,4)+"-"+month.substring(4,6);
 		model.addAttribute("month", month);
