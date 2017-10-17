@@ -108,7 +108,6 @@ public class YdYuekaoqinAdminController extends BaseController {
 	 * @param redirectAttributes
 	 * @return
 	 */
-	@RequiresPermissions("sys:user:edit")
 	@RequestMapping(value = "import", method= RequestMethod.POST)
 	public String importFile(MultipartFile file, RedirectAttributes redirectAttributes) {
 		try {
