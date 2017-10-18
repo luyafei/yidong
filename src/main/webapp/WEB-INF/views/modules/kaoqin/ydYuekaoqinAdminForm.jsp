@@ -51,7 +51,7 @@
 			<label class="control-label">姓名：</label>
 			<div class="controls">
 				<sys:treeselect id="uno" name="uno" value="${ydYuekaoqinAdmin.uno}" labelName="${ydYuekaoqinAdmin.name}" labelValue="${ydYuekaoqinAdmin.name}"
-								title="用户" url="/sys/office/treeData?type=3" cssClass="" allowClear="true" notAllowSelectParent="true"/>
+								title="用户" url="/sys/office/treeData?type=3&renzikaoqin=1" cssClass="" allowClear="true" notAllowSelectParent="true"/>
 			</div>
 		</div>
 		<div class="control-group">
