@@ -39,7 +39,7 @@
 		<ul class="ul-form">
 			<li><label>部门：</label>
 				<sys:treeselect id="deptId" name="deptId" value="${ydYuekaoqinAdmin.deptId}" labelName="" labelValue="${ydYuekaoqinAdmin.deptId}"
-					title="部门" url="/sys/office/treeData?type=2" cssClass="input-small" allowClear="true" notAllowSelectParent="true"/>
+					title="部门" url="/sys/office/treeData?type=2&renzikaoqin=1" cssClass="input-small" allowClear="true" notAllowSelectParent="true"/>
 			</li>
 			<li><label>姓名：</label>
 				<form:input path="name" htmlEscape="false" maxlength="255" class="input-medium"/>

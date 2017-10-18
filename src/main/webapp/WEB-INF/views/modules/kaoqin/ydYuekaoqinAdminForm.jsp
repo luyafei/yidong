@@ -44,7 +44,7 @@
 			<label class="control-label">部门：</label>
 			<div class="controls">
 				<sys:treeselect id="deptId" name="deptId" value="${ydYuekaoqinAdmin.deptId}" labelName="${ydYuekaoqinAdmin.deptName}" labelValue="${ydYuekaoqinAdmin.deptName}"
-					title="部门" url="/sys/office/treeData?type=2" cssClass="" allowClear="true" notAllowSelectParent="true"/>
+					title="部门" url="/sys/office/treeData?type=2&renzikaoqin=1" cssClass="" allowClear="true" notAllowSelectParent="true"/>
 			</div>
 		</div>
 		<div class="control-group">
